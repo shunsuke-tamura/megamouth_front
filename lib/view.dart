@@ -23,17 +23,27 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   var _editText = '';
   //TL sentence
   var _alertTextlist = <Tweet>[];
+  var isPolling = false;
 
   @override
   void initState() {
     super.initState();
-    ApiClient().get(Uri.parse('/post/all'), null).then((res) {
-      final parsed = json.decode(res.body).cast<Map<String, dynamic>>();
-      _alertTextlist =
-          parsed.map<Tweet>((json) => Tweet.fromJson(json)).toList();
-      logger.d('all tweet::$_alertTextlist');
-      setState(() {});
-    });
+    isPolling = true;
+    startPolling();
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    isPolling = false;
+    super.dispose();
+  }
+
+  Future<List<Tweet>> fetchTweet() async {
+    logger.i('fetch tweet');
+    final res = await ApiClient().get(Uri.parse('/post/all'), null);
+    final parsed = json.decode(res.body).cast<Map<String, dynamic>>();
+    return parsed.map<Tweet>((json) => Tweet.fromJson(json)).toList();
   }
 
   //tweet保存
@@ -48,10 +58,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       logger.e('message: ${res.body}');
     } else {
       logger.i('Success to POST /post/create');
-      final res = await ApiClient().get(Uri.parse('/post/all'), null);
-      final parsed = json.decode(res.body).cast<Map<String, dynamic>>();
-      _alertTextlist =
-          parsed.map<Tweet>((json) => Tweet.fromJson(json)).toList();
+      _alertTextlist = await fetchTweet();
       _editText = '';
       setState(() {});
     }
@@ -64,6 +71,14 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
     //double nowOffset = _scrollController.offset;
     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
         duration: const Duration(seconds: 1), curve: Curves.bounceIn);
+  }
+
+  Future<void> startPolling() async {
+    while (isPolling) {
+      _alertTextlist = await fetchTweet();
+      setState(() {});
+      await Future.delayed(const Duration(seconds: 5));
+    }
   }
 
   @override
