@@ -45,13 +45,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  //tweet dialog
+  void showdialog(){
+
+    
+  }
+
+  
+
   @override
   Widget build(BuildContext context) {
+    var _editText = '';
+    var _alertText = '';
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: <Widget>[
+          // setting button
           IconButton(
             onPressed: () {
               Navigator.push(
@@ -64,23 +75,40 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0), //マージン
-              child: IconButton(
-                onPressed: () {}, 
-                iconSize: 50,
-                icon: Icon(Icons.settings)
-              ),
-            )
-          ],
-        ),
-      ),
+      //tweet button
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed:() {
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title :Text("Hello !"),
+              content: TextField(
+                onChanged: (value) {
+                  setState(() {
+                  _editText = value;
+                  });
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); //画面を閉じる
+                  },
+                  child: Text('キャンセル'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _alertText = _editText; //編集用を保存用に
+                    });
+                  Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            )
+          );
+        },
         tooltip: 'Increment',
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
