@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logger/logger.dart';
 import './setting.dart';
 import './login.dart';
 import './view.dart';
@@ -8,6 +9,7 @@ import 'package:camera/camera.dart';
 import 'package:megamouth_front/widget/camera.dart';
 
 FlutterSecureStorage storage = const FlutterSecureStorage();
+final logger = Logger();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   cameras = await availableCameras();
