@@ -1,14 +1,12 @@
-import 'dart:html';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:megamouth_front/main.dart';
 
 class ApiClient {
   Uri baseUri = Uri.parse("https://megamouth-api.azurewebsites.net/api/v1");
-  FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<http.Response> post(Uri endpoint, String body) async {
-    Uri combineUri = baseUri.resolveUri(endpoint);
+    Uri combineUri = baseUri.replace(path: "${baseUri.path}/${endpoint.path}");
     Map<String, String> headers = {'content-type': 'application/json'};
 
     return await http.post(combineUri, headers: headers, body: body);

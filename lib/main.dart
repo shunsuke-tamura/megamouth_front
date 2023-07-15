@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import './setting.dart';
 import './login.dart';
 import './view.dart';
 
+FlutterSecureStorage storage = const FlutterSecureStorage();
 void main() {
   runApp(const MyApp());
 }
@@ -24,6 +28,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
