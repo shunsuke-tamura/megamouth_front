@@ -24,8 +24,6 @@ class _CameraWidgetState extends State<CameraWidget> {
       enableLandmarks: true,
     ),
   );
-  // CustomPaint? _customPaint;
-  // List<Tweet> _tweets = [];
   List<Widget> _tweets = [];
   late Size canvasSize;
 
@@ -64,19 +62,16 @@ class _CameraWidgetState extends State<CameraWidget> {
     if (!controller.value.isInitialized) {
       return Container();
     }
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
-        return CameraPreview(
-          controller,
-          child: Stack(
+    return CameraPreview(
+      controller,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
+          return Stack(
             children: _tweets,
-            //   children: [
-            //   _customPaint ?? const SizedBox.shrink(),
-            // ]
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -159,25 +154,20 @@ class _CameraWidgetState extends State<CameraWidget> {
           inputImage.metadata!.rotation,
           CameraLensDirection.front,
         );
-        _tweets.addAll([
-          CustomPaint(
-            painter: FaceDetectorPainter(conf),
-          ),
-          Positioned(
-            left: conf.bubbleLeftBottom.dx,
-            top: conf.bubbleLeftBottom.dy - conf.height,
-            width: conf.width,
-            height: conf.height,
-            child: const Text('hogehoge'),
-          ),
-        ]
-            // Tweet(
-            // face: face,
-            // imageSize: inputImage.metadata!.size,
-            // imageRotation: inputImage.metadata!.rotation,
-            // content: 'content',
-            // )
-            );
+        _tweets.addAll(
+          [
+            CustomPaint(
+              painter: FaceDetectorPainter(conf),
+            ),
+            Positioned(
+              left: conf.bubbleLeftBottom.dx,
+              top: conf.bubbleLeftBottom.dy - conf.height,
+              width: conf.width,
+              height: conf.height,
+              child: const Text('hogehoge'),
+            ),
+          ],
+        );
       }
     }
     isBusy = false;

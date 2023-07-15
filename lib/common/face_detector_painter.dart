@@ -69,9 +69,6 @@ class FaceDetectorPainter extends CustomPainter {
             bubbleLeftBottom.dy);
 
       canvas.drawPath(path, paint);
-
-      canvas.drawCircle(const Offset(0, 0), 20, paint);
-      canvas.drawCircle(const Offset(390, 741), 20, paint);
     }
 
     // print('-------canvas--------');
