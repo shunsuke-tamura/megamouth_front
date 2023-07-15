@@ -5,9 +5,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import './setting.dart';
 import './login.dart';
 import './view.dart';
+import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
+import 'package:megamouth_front/widgets/camera.dart';
 
-FlutterSecureStorage storage = const FlutterSecureStorage();
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
+  FlutterSecureStorage storage = const FlutterSecureStorage();
   runApp(const MyApp());
 }
 
