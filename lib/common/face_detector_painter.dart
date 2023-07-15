@@ -6,54 +6,30 @@ import 'coordinates_translator.dart';
 
 class FaceDetectorPainter extends CustomPainter {
   FaceDetectorPainter(
-    this.faces,
-    this.imageSize,
-    this.rotation,
-    this.cameraLensDirection,
-  );
+    this.conf,
+  ) {
+    width = conf.width;
+    height = conf.height;
+    pinHeight = conf.pinHeight;
+    pinWidth = conf.pinWidth;
+    faceBubbleMargine = conf.faceBubbleMargine;
+    bubbleLeftBottom = conf.bubbleLeftBottom;
+    bubbleEdgeDiameter = conf.bubbleEdgeDiameter;
+  }
 
-  final List<Face> faces;
-  final Size imageSize;
-  final InputImageRotation rotation;
-  final CameraLensDirection cameraLensDirection;
+  final SpeechBubbleConf conf;
+
+  late double width;
+  late double height;
+  late double pinHeight;
+  late double pinWidth;
+  late double faceBubbleMargine;
+  late Offset bubbleLeftBottom;
+  late double bubbleEdgeDiameter;
 
   @override
   void paint(Canvas canvas, Size size) {
-    void text(String text, Size bubbleSize, Offset leftBottom) {
-      final fontSize = bubbleSize.width * 0.1;
-      final textStyle = TextStyle(
-        color: Colors.black,
-        fontSize: fontSize,
-      );
-      final textSpan = TextSpan(
-        text: text,
-        style: textStyle,
-      );
-      final textPainter = TextPainter(
-        text: textSpan,
-        textDirection: TextDirection.ltr,
-      );
-      textPainter.layout(
-        minWidth: 0,
-        maxWidth: bubbleSize.width - 16,
-      );
-      final offset =
-          Offset(leftBottom.dx + 8, leftBottom.dy - bubbleSize.height + 30);
-      textPainter.paint(canvas, offset);
-    }
-
-    void speechBubble(double faceWidth, Offset faceLeftTop) {
-      final width = faceWidth * 1.2;
-      final height = width * 0.5;
-      final pinHeight = height * 0.3;
-      final pinWidth = pinHeight;
-      final faceBubbleMargine = width * 0.2;
-      final bubbleLeftBottom = Offset(
-        (faceLeftTop.dx + faceWidth / 2) - width / 2,
-        faceLeftTop.dy - pinHeight - faceBubbleMargine,
-      );
-      final bubbleEdgeDiameter = width * 0.1;
-
+    void speechBubble() {
       final paint = Paint()
         ..color = Colors.white
         ..style = PaintingStyle.fill;
@@ -93,44 +69,83 @@ class FaceDetectorPainter extends CustomPainter {
             bubbleLeftBottom.dy);
 
       canvas.drawPath(path, paint);
-      text('text', Size(width, height),
-          Offset(bubbleLeftBottom.dx, bubbleLeftBottom.dy - pinHeight));
+
+      canvas.drawCircle(const Offset(0, 0), 20, paint);
+      canvas.drawCircle(const Offset(390, 741), 20, paint);
     }
 
-    for (final Face face in faces) {
-      final left = translateX(
-        face.boundingBox.left,
-        size,
-        imageSize,
-        rotation,
-        cameraLensDirection,
-      );
-      final top = translateY(
-        face.boundingBox.top,
-        size,
-        imageSize,
-        rotation,
-        cameraLensDirection,
-      );
-      final right = translateX(
-        face.boundingBox.right,
-        size,
-        imageSize,
-        rotation,
-        cameraLensDirection,
-      );
+    // print('-------canvas--------');
+    // print(size.width);
+    // print(size.height);
+    // print('---------------------');
 
-      // canvas.drawRect(
-      //   Rect.fromLTRB(left, top, right, bottom),
-      //   paint1,
-      // );
-      speechBubble(right - left, Offset(left, top));
-    }
-    // speechBubble(150, const Offset(100, 200));
+    speechBubble();
   }
 
   @override
   bool shouldRepaint(FaceDetectorPainter oldDelegate) {
-    return oldDelegate.imageSize != imageSize || oldDelegate.faces != faces;
+    return oldDelegate.conf.bubbleLeftBottom != conf.bubbleLeftBottom;
+  }
+}
+
+class SpeechBubbleConf {
+  double width;
+  double height;
+  double pinHeight;
+  double pinWidth;
+  double faceBubbleMargine;
+  Offset bubbleLeftBottom;
+  double bubbleEdgeDiameter;
+
+  SpeechBubbleConf(
+    this.bubbleEdgeDiameter,
+    this.bubbleLeftBottom,
+    this.faceBubbleMargine,
+    this.height,
+    this.pinHeight,
+    this.pinWidth,
+    this.width,
+  );
+
+  static SpeechBubbleConf fromFace(Face face, Size canvasSize, Size imageSize,
+      InputImageRotation rotation, CameraLensDirection cameraLensDirection) {
+    final left = translateX(
+      face.boundingBox.left,
+      canvasSize,
+      imageSize,
+      rotation,
+      cameraLensDirection,
+    );
+    final top = translateY(
+      face.boundingBox.top,
+      canvasSize,
+      imageSize,
+      rotation,
+      cameraLensDirection,
+    );
+    final right = translateX(
+      face.boundingBox.right,
+      canvasSize,
+      imageSize,
+      rotation,
+      cameraLensDirection,
+    );
+
+    final faceWidth = right - left;
+    final faceLeftTop = Offset(left, top);
+
+    final width = faceWidth * 1.2;
+    final height = width * 0.5;
+    final pinHeight = height * 0.3;
+    final pinWidth = pinHeight;
+    final faceBubbleMargine = width * 0.2;
+    final bubbleLeftBottom = Offset(
+      (faceLeftTop.dx + faceWidth / 2) - width / 2,
+      faceLeftTop.dy - pinHeight - faceBubbleMargine,
+    );
+    final bubbleEdgeDiameter = width * 0.1;
+
+    return SpeechBubbleConf(bubbleEdgeDiameter, bubbleLeftBottom,
+        faceBubbleMargine, height, pinHeight, pinWidth, width);
   }
 }

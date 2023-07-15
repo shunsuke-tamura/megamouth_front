@@ -24,7 +24,10 @@ class _CameraWidgetState extends State<CameraWidget> {
       enableLandmarks: true,
     ),
   );
-  CustomPaint? _customPaint;
+  // CustomPaint? _customPaint;
+  // List<Tweet> _tweets = [];
+  List<Widget> _tweets = [];
+  late Size canvasSize;
 
   @override
   void initState() {
@@ -61,11 +64,19 @@ class _CameraWidgetState extends State<CameraWidget> {
     if (!controller.value.isInitialized) {
       return Container();
     }
-    return MaterialApp(
-      home: CameraPreview(
-        controller,
-        child: _customPaint,
-      ),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
+        return CameraPreview(
+          controller,
+          child: Stack(
+            children: _tweets,
+            //   children: [
+            //   _customPaint ?? const SizedBox.shrink(),
+            // ]
+          ),
+        );
+      },
     );
   }
 
@@ -137,17 +148,37 @@ class _CameraWidgetState extends State<CameraWidget> {
     if (isBusy) return;
     isBusy = true;
     final faces = await _faceDetector.processImage(inputImage);
+    _tweets = [];
     if (inputImage.metadata?.size != null &&
         inputImage.metadata?.rotation != null) {
-      final painter = FaceDetectorPainter(
-        faces,
-        inputImage.metadata!.size,
-        inputImage.metadata!.rotation,
-        CameraLensDirection.front,
-      );
-      _customPaint = CustomPaint(
-        painter: painter,
-      );
+      for (Face face in faces) {
+        final conf = SpeechBubbleConf.fromFace(
+          face,
+          canvasSize,
+          inputImage.metadata!.size,
+          inputImage.metadata!.rotation,
+          CameraLensDirection.front,
+        );
+        _tweets.addAll([
+          CustomPaint(
+            painter: FaceDetectorPainter(conf),
+          ),
+          Positioned(
+            left: conf.bubbleLeftBottom.dx,
+            top: conf.bubbleLeftBottom.dy - conf.height,
+            width: conf.width,
+            height: conf.height,
+            child: const Text('hogehoge'),
+          ),
+        ]
+            // Tweet(
+            // face: face,
+            // imageSize: inputImage.metadata!.size,
+            // imageRotation: inputImage.metadata!.rotation,
+            // content: 'content',
+            // )
+            );
+      }
     }
     isBusy = false;
     if (mounted) {
