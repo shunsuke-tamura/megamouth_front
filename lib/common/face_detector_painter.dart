@@ -24,42 +24,6 @@ class FaceDetectorPainter extends CustomPainter {
       ..strokeWidth = 1.0
       ..color = Colors.red;
 
-    for (final Face face in faces) {
-      final left = translateX(
-        face.boundingBox.left,
-        size,
-        imageSize,
-        rotation,
-        cameraLensDirection,
-      );
-      final top = translateY(
-        face.boundingBox.top,
-        size,
-        imageSize,
-        rotation,
-        cameraLensDirection,
-      );
-      final right = translateX(
-        face.boundingBox.right,
-        size,
-        imageSize,
-        rotation,
-        cameraLensDirection,
-      );
-      final bottom = translateY(
-        face.boundingBox.bottom,
-        size,
-        imageSize,
-        rotation,
-        cameraLensDirection,
-      );
-
-      canvas.drawRect(
-        Rect.fromLTRB(left, top, right, bottom),
-        paint1,
-      );
-    }
-
     void speechBubble(double faceWidth, Position faceLeftTop) {
       final width = faceWidth * 1.2;
       final height = width * 0.5;
@@ -107,9 +71,42 @@ class FaceDetectorPainter extends CustomPainter {
       canvas.drawPath(path, paint);
     }
 
-    speechBubble(100, Position(200, 200));
-    speechBubble(300, Position(20, 150));
-    speechBubble(40, Position(100, 400));
+    for (final Face face in faces) {
+      final left = translateX(
+        face.boundingBox.left,
+        size,
+        imageSize,
+        rotation,
+        cameraLensDirection,
+      );
+      final top = translateY(
+        face.boundingBox.top,
+        size,
+        imageSize,
+        rotation,
+        cameraLensDirection,
+      );
+      final right = translateX(
+        face.boundingBox.right,
+        size,
+        imageSize,
+        rotation,
+        cameraLensDirection,
+      );
+      final bottom = translateY(
+        face.boundingBox.bottom,
+        size,
+        imageSize,
+        rotation,
+        cameraLensDirection,
+      );
+
+      canvas.drawRect(
+        Rect.fromLTRB(left, top, right, bottom),
+        paint1,
+      );
+      speechBubble(right - left, Position(left, top));
+    }
   }
 
   @override
