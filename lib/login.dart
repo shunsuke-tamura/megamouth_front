@@ -1,19 +1,22 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:megamouth_front/common/api_client.dart';
+import 'package:megamouth_front/logic/user_provider.dart';
 import 'package:megamouth_front/main.dart';
+import 'package:megamouth_front/model/login_res.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
   //final String message;
   //SecondScreen({required this.message});
 
   @override
-  State<LoginScreen> createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginScreen> {
+class LoginPageState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     super.initState();
@@ -22,7 +25,8 @@ class _LoginPageState extends State<LoginScreen> {
   } //initState
 
   void _checkLogin() async {
-    if (await storage.read(key: "token") != null) {
+    if (await storage.read(key: "token") != null &&
+        ref.read(userProvider).id != '') {
       _toHomePage();
     }
   } //_checkLogin
@@ -33,9 +37,10 @@ class _LoginPageState extends State<LoginScreen> {
     if (response.statusCode != 200) {
       return response.body;
     } else {
-      await storage.write(
-          key: "token",
-          value: (json.decode(response.body) as Map<String, dynamic>)["jwt"]);
+      final res =
+          LoginRes.fromJson(json.decode(response.body) as Map<String, dynamic>);
+      await storage.write(key: "token", value: res.jwt);
+      ref.read(userProvider.notifier).state = res.user;
       return null;
     }
   }
