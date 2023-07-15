@@ -24,14 +24,9 @@ class _LoginPageState extends State<LoginScreen> {
   } //initState
 
   void _checkLogin() async {
-    //QUI POSSO cancellare gli sp 'username'(per la presentazione dell'app)
-
-    //Get the SharedPreference instance and check if the value of the 'username' filed is set or not
-    final sp = await SharedPreferences.getInstance();
-    if (sp.getString('username') != null) {
-      //If 'username is set, push the HomePage
+    if (await storage.read(key: "token") != null) {
       _toHomePage(context);
-    } //if
+    }
   } //_checkLogin
 
   Future<String?>? _loginUser(LoginData data) async {
@@ -60,21 +55,17 @@ class _LoginPageState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      //title: 'Login',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: FlutterLogin(
-        title: 'login_flow',
-        onLogin: _loginUser,
-        onSignup: _signUpUser,
-        onRecoverPassword: _recoverPassword,
-        onSubmitAnimationCompleted: () async {
-          _toHomePage(context);
-        },
-        messages: LoginMessages(userHint: "User"),
-        userType: LoginUserType.text,
-        userValidator: (_) => null,
-      ),
+    return FlutterLogin(
+      title: 'login_flow',
+      onLogin: _loginUser,
+      onSignup: _signUpUser,
+      onRecoverPassword: _recoverPassword,
+      onSubmitAnimationCompleted: () async {
+        _toHomePage(context);
+      },
+      messages: LoginMessages(userHint: "User"),
+      userType: LoginUserType.text,
+      userValidator: (_) => null,
     );
   }
 
