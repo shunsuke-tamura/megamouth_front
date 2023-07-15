@@ -19,15 +19,15 @@ class FaceDetectorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    void speechBubble(double faceWidth, Position faceLeftTop) {
+    void speechBubble(double faceWidth, Offset faceLeftTop) {
       final width = faceWidth * 1.2;
       final height = width * 0.5;
       final pinHeight = height * 0.3;
       final pinWidth = pinHeight;
       final faceBubbleMargine = width * 0.2;
-      final bubbleLeftBottom = Position(
-        (faceLeftTop.x + faceWidth / 2) - width / 2,
-        faceLeftTop.y - pinHeight - faceBubbleMargine,
+      final bubbleLeftBottom = Offset(
+        (faceLeftTop.dx + faceWidth / 2) - width / 2,
+        faceLeftTop.dy - pinHeight - faceBubbleMargine,
       );
       final bubbleEdgeDiameter = width * 0.1;
 
@@ -36,34 +36,38 @@ class FaceDetectorPainter extends CustomPainter {
         ..style = PaintingStyle.fill;
 
       final path = Path()
-        ..moveTo(bubbleLeftBottom.x, bubbleLeftBottom.y)
-        ..lineTo(
-            bubbleLeftBottom.x + width - bubbleEdgeDiameter, bubbleLeftBottom.y)
-        ..quadraticBezierTo(bubbleLeftBottom.x + width, bubbleLeftBottom.y,
-            bubbleLeftBottom.x + width, bubbleLeftBottom.y - bubbleEdgeDiameter)
-        ..lineTo(bubbleLeftBottom.x + width,
-            bubbleLeftBottom.y - height + bubbleEdgeDiameter)
+        ..moveTo(bubbleLeftBottom.dx, bubbleLeftBottom.dy)
+        ..lineTo(bubbleLeftBottom.dx + width - bubbleEdgeDiameter,
+            bubbleLeftBottom.dy)
         ..quadraticBezierTo(
-            bubbleLeftBottom.x + width,
-            bubbleLeftBottom.y - height,
-            bubbleLeftBottom.x + width - bubbleEdgeDiameter,
-            bubbleLeftBottom.y - height)
-        ..lineTo(bubbleLeftBottom.x + bubbleEdgeDiameter,
-            bubbleLeftBottom.y - height)
+            bubbleLeftBottom.dx + width,
+            bubbleLeftBottom.dy,
+            bubbleLeftBottom.dx + width,
+            bubbleLeftBottom.dy - bubbleEdgeDiameter)
+        ..lineTo(bubbleLeftBottom.dx + width,
+            bubbleLeftBottom.dy - height + bubbleEdgeDiameter)
         ..quadraticBezierTo(
-            bubbleLeftBottom.x,
-            bubbleLeftBottom.y - height,
-            bubbleLeftBottom.x,
-            bubbleLeftBottom.y - height + bubbleEdgeDiameter)
-        ..lineTo(bubbleLeftBottom.x, bubbleLeftBottom.y - bubbleEdgeDiameter)
-        ..quadraticBezierTo(bubbleLeftBottom.x, bubbleLeftBottom.y,
-            bubbleLeftBottom.x + bubbleEdgeDiameter, bubbleLeftBottom.y)
+            bubbleLeftBottom.dx + width,
+            bubbleLeftBottom.dy - height,
+            bubbleLeftBottom.dx + width - bubbleEdgeDiameter,
+            bubbleLeftBottom.dy - height)
+        ..lineTo(bubbleLeftBottom.dx + bubbleEdgeDiameter,
+            bubbleLeftBottom.dy - height)
+        ..quadraticBezierTo(
+            bubbleLeftBottom.dx,
+            bubbleLeftBottom.dy - height,
+            bubbleLeftBottom.dx,
+            bubbleLeftBottom.dy - height + bubbleEdgeDiameter)
+        ..lineTo(bubbleLeftBottom.dx, bubbleLeftBottom.dy - bubbleEdgeDiameter)
+        ..quadraticBezierTo(bubbleLeftBottom.dx, bubbleLeftBottom.dy,
+            bubbleLeftBottom.dx + bubbleEdgeDiameter, bubbleLeftBottom.dy)
         // pin
         ..moveTo(
-            bubbleLeftBottom.x + width / 2 - pinWidth / 2, bubbleLeftBottom.y)
-        ..lineTo(bubbleLeftBottom.x + width / 2, bubbleLeftBottom.y + pinHeight)
+            bubbleLeftBottom.dx + width / 2 - pinWidth / 2, bubbleLeftBottom.dy)
         ..lineTo(
-            bubbleLeftBottom.x + width / 2 + pinWidth / 2, bubbleLeftBottom.y);
+            bubbleLeftBottom.dx + width / 2, bubbleLeftBottom.dy + pinHeight)
+        ..lineTo(bubbleLeftBottom.dx + width / 2 + pinWidth / 2,
+            bubbleLeftBottom.dy);
 
       canvas.drawPath(path, paint);
     }
@@ -95,7 +99,7 @@ class FaceDetectorPainter extends CustomPainter {
       //   Rect.fromLTRB(left, top, right, bottom),
       //   paint1,
       // );
-      speechBubble(right - left, Position(left, top));
+      speechBubble(right - left, Offset(left, top));
     }
   }
 
@@ -103,10 +107,4 @@ class FaceDetectorPainter extends CustomPainter {
   bool shouldRepaint(FaceDetectorPainter oldDelegate) {
     return oldDelegate.imageSize != imageSize || oldDelegate.faces != faces;
   }
-}
-
-class Position {
-  double x;
-  double y;
-  Position(this.x, this.y);
 }
