@@ -19,19 +19,16 @@ class FaceDetectorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint1 = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0
-      ..color = Colors.red;
-
     void speechBubble(double faceWidth, Position faceLeftTop) {
       final width = faceWidth * 1.2;
       final height = width * 0.5;
       final pinHeight = height * 0.3;
       final pinWidth = pinHeight;
+      final faceBubbleMargine = width * 0.3;
       final bubbleLeftBottom = Position(
-          (faceLeftTop.x + faceWidth / 2) - width / 2,
-          faceLeftTop.y - pinHeight);
+        (faceLeftTop.x + faceWidth / 2) - width / 2,
+        faceLeftTop.y - pinHeight - faceBubbleMargine,
+      );
       final bubbleEdgeDiameter = width * 0.1;
 
       final paint = Paint()
@@ -93,18 +90,11 @@ class FaceDetectorPainter extends CustomPainter {
         rotation,
         cameraLensDirection,
       );
-      final bottom = translateY(
-        face.boundingBox.bottom,
-        size,
-        imageSize,
-        rotation,
-        cameraLensDirection,
-      );
 
-      canvas.drawRect(
-        Rect.fromLTRB(left, top, right, bottom),
-        paint1,
-      );
+      // canvas.drawRect(
+      //   Rect.fromLTRB(left, top, right, bottom),
+      //   paint1,
+      // );
       speechBubble(right - left, Position(left, top));
     }
   }
