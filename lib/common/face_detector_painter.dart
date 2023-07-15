@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:megamouth_front/widgets/camera.dart';
 
 import 'coordinates_translator.dart';
 
@@ -19,6 +22,29 @@ class FaceDetectorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    void text(String text, Size bubbleSize, Offset leftBottom) {
+      final fontSize = bubbleSize.width * 0.1;
+      final textStyle = TextStyle(
+        color: Colors.black,
+        fontSize: fontSize,
+      );
+      final textSpan = TextSpan(
+        text: text,
+        style: textStyle,
+      );
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout(
+        minWidth: 0,
+        maxWidth: bubbleSize.width - 16,
+      );
+      final offset =
+          Offset(leftBottom.dx + 8, leftBottom.dy - bubbleSize.height + 30);
+      textPainter.paint(canvas, offset);
+    }
+
     void speechBubble(double faceWidth, Offset faceLeftTop) {
       final width = faceWidth * 1.2;
       final height = width * 0.5;
@@ -70,6 +96,8 @@ class FaceDetectorPainter extends CustomPainter {
             bubbleLeftBottom.dy);
 
       canvas.drawPath(path, paint);
+      text('text', Size(width, height),
+          Offset(bubbleLeftBottom.dx, bubbleLeftBottom.dy - pinHeight));
     }
 
     for (final Face face in faces) {
@@ -101,6 +129,7 @@ class FaceDetectorPainter extends CustomPainter {
       // );
       speechBubble(right - left, Offset(left, top));
     }
+    // speechBubble(150, const Offset(100, 200));
   }
 
   @override
