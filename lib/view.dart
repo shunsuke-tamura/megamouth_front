@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:megamouth_front/widgets/camera.dart';
 import './setting.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -56,28 +57,38 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       //Time Line
-      body: Center(
-        child: Align(
-          alignment: Alignment.bottomLeft,
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            height: MediaQuery.of(context).size.height / 4,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.transparent,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (var i = 0; i < _alertTextlist.length; i++)
-                    Text(
-                      _alertTextlist[i],
-                    ),
-                ],
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          const SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: CameraWidget(),
+          ),
+          Center(
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                margin: const EdgeInsets.all(10),
+                height: MediaQuery.of(context).size.height / 4,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.transparent,
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (var i = 0; i < _alertTextlist.length; i++)
+                        Text(
+                          _alertTextlist[i],
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
+          )
+        ],
       ),
       //tweet button
       floatingActionButton: FloatingActionButton(
