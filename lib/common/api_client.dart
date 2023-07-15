@@ -12,9 +12,10 @@ class ApiClient {
   }
 
   Future<http.Response> get(Uri endpoint, Uri? pathParam) async {
-    Uri combineUri = baseUri.resolveUri(endpoint);
+    Uri combineUri = baseUri.replace(path: "${baseUri.path}/${endpoint.path}");
     if (pathParam != null) {
-      combineUri = combineUri.resolveUri(pathParam);
+      combineUri =
+          combineUri.replace(path: "${baseUri.path}/${pathParam.path}");
     }
 
     String? token = await storage.read(key: "token");
@@ -27,9 +28,10 @@ class ApiClient {
   }
 
   Future<http.Response> put(Uri endpoint, Uri? pathParam, String body) async {
-    Uri combineUri = baseUri.resolveUri(endpoint);
+    Uri combineUri = baseUri.replace(path: "${baseUri.path}/${endpoint.path}");
     if (pathParam != null) {
-      combineUri = combineUri.resolveUri(pathParam);
+      combineUri =
+          combineUri.replace(path: "${baseUri.path}/${pathParam.path}");
     }
 
     String? token = await storage.read(key: "token");
@@ -42,9 +44,10 @@ class ApiClient {
   }
 
   Future<http.Response> delete(Uri endpoint, Uri? pathParam) async {
-    Uri combineUri = baseUri.resolveUri(endpoint);
+    Uri combineUri = baseUri.replace(path: "${baseUri.path}/${endpoint.path}");
     if (pathParam != null) {
-      combineUri = combineUri.resolveUri(pathParam);
+      combineUri =
+          combineUri.replace(path: "${baseUri.path}/${pathParam.path}");
     }
 
     String? token = await storage.read(key: "token");
