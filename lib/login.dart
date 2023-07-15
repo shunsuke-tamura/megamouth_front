@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:megamouth_front/common/api_client.dart';
 import 'package:megamouth_front/main.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import './view.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -25,7 +23,7 @@ class _LoginPageState extends State<LoginScreen> {
 
   void _checkLogin() async {
     if (await storage.read(key: "token") != null) {
-      _toHomePage(context);
+      _toHomePage();
     }
   } //_checkLogin
 
@@ -61,7 +59,7 @@ class _LoginPageState extends State<LoginScreen> {
       onSignup: _signUpUser,
       onRecoverPassword: _recoverPassword,
       onSubmitAnimationCompleted: () async {
-        _toHomePage(context);
+        _toHomePage();
       },
       messages: LoginMessages(userHint: "User"),
       userType: LoginUserType.text,
@@ -69,9 +67,7 @@ class _LoginPageState extends State<LoginScreen> {
     );
   }
 
-  void _toHomePage(BuildContext context) {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) =>
-            const MyHomePage(title: 'Twitter Demo Home Page')));
+  void _toHomePage() {
+    Navigator.of(context).pushReplacementNamed("/view");
   } //_toHomePage
 }

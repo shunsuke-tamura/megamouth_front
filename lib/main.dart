@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import './setting.dart';
 import './login.dart';
 import './view.dart';
 import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
 import 'package:megamouth_front/widgets/camera.dart';
 
 FlutterSecureStorage storage = const FlutterSecureStorage();
@@ -31,9 +28,9 @@ class MyApp extends StatelessWidget {
       // home: const LoginScreen(),
       initialRoute: "/login",
       routes: {
-        "/login": (context) => LoginScreen(),
-        "/view": (context) => MyHomePage(title: 'Twitter Demo Home Page'),
-        "/setting": (context) => SettingScreen(),
+        "/login": (context) => const LoginScreen(),
+        "/view": (context) => const MyHomePage(title: 'Twitter Demo Home Page'),
+        "/setting": (context) => const SettingScreen(),
       },
       //home: const MyHomePage(title: 'Twitter Demo Home Page'),
       debugShowCheckedModeBanner: false,
