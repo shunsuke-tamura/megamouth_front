@@ -1,27 +1,60 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:megamouth_front/common/api_client.dart';
+import 'package:megamouth_front/logic/user_provider.dart';
+import 'package:megamouth_front/main.dart';
+import 'package:megamouth_front/model/tweet.dart';
 import 'package:megamouth_front/widget/camera.dart';
 import './setting.dart';
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePageState extends ConsumerState<MyHomePage> {
   //tweet sentence
   var _editText = '';
   //TL sentence
-  final _alertTextlist = <String>[];
+  var _alertTextlist = <Tweet>[];
+
+  @override
+  void initState() {
+    super.initState();
+    ApiClient().get(Uri.parse('/post/all'), null).then((res) {
+      final parsed = json.decode(res.body).cast<Map<String, dynamic>>();
+      _alertTextlist =
+          parsed.map<Tweet>((json) => Tweet.fromJson(json)).toList();
+      logger.d('all tweet::$_alertTextlist');
+      setState(() {});
+    });
+  }
 
   //tweet保存
-  void _addtweet() {
-    setState(() {
-      _alertTextlist.add(_editText); //編集用を保存用に
-    });
+  void _addtweet() async {
+    final body = {'content': _editText, 'user_id': ref.read(userProvider).id};
+    final res =
+        await ApiClient().post(Uri.parse('/post/create'), json.encode(body));
+    if (res.statusCode != 200) {
+      logger.e('Faild to POST /post/create');
+      logger.e('RequestBody: ${json.encode(body)}');
+      logger.e('StatusCode: ${res.statusCode}');
+      logger.e('message: ${res.body}');
+    } else {
+      logger.i('Success to POST /post/create');
+      final res = await ApiClient().get(Uri.parse('/post/all'), null);
+      final parsed = json.decode(res.body).cast<Map<String, dynamic>>();
+      _alertTextlist =
+          parsed.map<Tweet>((json) => Tweet.fromJson(json)).toList();
+      _editText = '';
+      setState(() {});
+    }
   }
 
   //TLコンテナのスクロールバー調整
@@ -80,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       for (var i = 0; i < _alertTextlist.length; i++)
                         Text(
-                          _alertTextlist[i],
+                          _alertTextlist[i].content,
                         ),
                     ],
                   ),

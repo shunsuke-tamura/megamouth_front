@@ -23,17 +23,10 @@ mixin _$Tweet {
   @JsonKey(name: 'author')
   String get author => throw _privateConstructorUsedError;
   @JsonKey(name: 'content')
-  String get content => throw _privateConstructorUsedError;
-  @JsonKey(name: 'createdAt')
-  String get createdAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'id')
+  String get content =>
+      throw _privateConstructorUsedError; // @JsonKey(name: 'createdAt') required String createdAt,
+  @JsonKey(name: 'ID')
   int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'reaction')
-  List<Reaction> get reaction => throw _privateConstructorUsedError;
-  @JsonKey(name: 'reply')
-  String get reply => throw _privateConstructorUsedError;
-  @JsonKey(name: 'updatedAt')
-  String get updatedAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -48,11 +41,7 @@ abstract class $TweetCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'author') String author,
       @JsonKey(name: 'content') String content,
-      @JsonKey(name: 'createdAt') String createdAt,
-      @JsonKey(name: 'id') int id,
-      @JsonKey(name: 'reaction') List<Reaction> reaction,
-      @JsonKey(name: 'reply') String reply,
-      @JsonKey(name: 'updatedAt') String updatedAt});
+      @JsonKey(name: 'ID') int id});
 }
 
 /// @nodoc
@@ -70,11 +59,7 @@ class _$TweetCopyWithImpl<$Res, $Val extends Tweet>
   $Res call({
     Object? author = null,
     Object? content = null,
-    Object? createdAt = null,
     Object? id = null,
-    Object? reaction = null,
-    Object? reply = null,
-    Object? updatedAt = null,
   }) {
     return _then(_value.copyWith(
       author: null == author
@@ -85,26 +70,10 @@ class _$TweetCopyWithImpl<$Res, $Val extends Tweet>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      reaction: null == reaction
-          ? _value.reaction
-          : reaction // ignore: cast_nullable_to_non_nullable
-              as List<Reaction>,
-      reply: null == reply
-          ? _value.reply
-          : reply // ignore: cast_nullable_to_non_nullable
-              as String,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String,
     ) as $Val);
   }
 }
@@ -118,11 +87,7 @@ abstract class _$$_TweetCopyWith<$Res> implements $TweetCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'author') String author,
       @JsonKey(name: 'content') String content,
-      @JsonKey(name: 'createdAt') String createdAt,
-      @JsonKey(name: 'id') int id,
-      @JsonKey(name: 'reaction') List<Reaction> reaction,
-      @JsonKey(name: 'reply') String reply,
-      @JsonKey(name: 'updatedAt') String updatedAt});
+      @JsonKey(name: 'ID') int id});
 }
 
 /// @nodoc
@@ -136,11 +101,7 @@ class __$$_TweetCopyWithImpl<$Res> extends _$TweetCopyWithImpl<$Res, _$_Tweet>
   $Res call({
     Object? author = null,
     Object? content = null,
-    Object? createdAt = null,
     Object? id = null,
-    Object? reaction = null,
-    Object? reply = null,
-    Object? updatedAt = null,
   }) {
     return _then(_$_Tweet(
       author: null == author
@@ -151,26 +112,10 @@ class __$$_TweetCopyWithImpl<$Res> extends _$TweetCopyWithImpl<$Res, _$_Tweet>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      reaction: null == reaction
-          ? _value._reaction
-          : reaction // ignore: cast_nullable_to_non_nullable
-              as List<Reaction>,
-      reply: null == reply
-          ? _value.reply
-          : reply // ignore: cast_nullable_to_non_nullable
-              as String,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
@@ -181,12 +126,7 @@ class _$_Tweet implements _Tweet {
   const _$_Tweet(
       {@JsonKey(name: 'author') required this.author,
       @JsonKey(name: 'content') required this.content,
-      @JsonKey(name: 'createdAt') required this.createdAt,
-      @JsonKey(name: 'id') required this.id,
-      @JsonKey(name: 'reaction') required final List<Reaction> reaction,
-      @JsonKey(name: 'reply') required this.reply,
-      @JsonKey(name: 'updatedAt') required this.updatedAt})
-      : _reaction = reaction;
+      @JsonKey(name: 'ID') required this.id});
 
   factory _$_Tweet.fromJson(Map<String, dynamic> json) =>
       _$$_TweetFromJson(json);
@@ -197,31 +137,14 @@ class _$_Tweet implements _Tweet {
   @override
   @JsonKey(name: 'content')
   final String content;
+// @JsonKey(name: 'createdAt') required String createdAt,
   @override
-  @JsonKey(name: 'createdAt')
-  final String createdAt;
-  @override
-  @JsonKey(name: 'id')
+  @JsonKey(name: 'ID')
   final int id;
-  final List<Reaction> _reaction;
-  @override
-  @JsonKey(name: 'reaction')
-  List<Reaction> get reaction {
-    if (_reaction is EqualUnmodifiableListView) return _reaction;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_reaction);
-  }
-
-  @override
-  @JsonKey(name: 'reply')
-  final String reply;
-  @override
-  @JsonKey(name: 'updatedAt')
-  final String updatedAt;
 
   @override
   String toString() {
-    return 'Tweet(author: $author, content: $content, createdAt: $createdAt, id: $id, reaction: $reaction, reply: $reply, updatedAt: $updatedAt)';
+    return 'Tweet(author: $author, content: $content, id: $id)';
   }
 
   @override
@@ -231,19 +154,12 @@ class _$_Tweet implements _Tweet {
             other is _$_Tweet &&
             (identical(other.author, author) || other.author == author) &&
             (identical(other.content, content) || other.content == content) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.id, id) || other.id == id) &&
-            const DeepCollectionEquality().equals(other._reaction, _reaction) &&
-            (identical(other.reply, reply) || other.reply == reply) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+            (identical(other.id, id) || other.id == id));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, author, content, createdAt, id,
-      const DeepCollectionEquality().hash(_reaction), reply, updatedAt);
+  int get hashCode => Object.hash(runtimeType, author, content, id);
 
   @JsonKey(ignore: true)
   @override
@@ -263,11 +179,7 @@ abstract class _Tweet implements Tweet {
   const factory _Tweet(
       {@JsonKey(name: 'author') required final String author,
       @JsonKey(name: 'content') required final String content,
-      @JsonKey(name: 'createdAt') required final String createdAt,
-      @JsonKey(name: 'id') required final int id,
-      @JsonKey(name: 'reaction') required final List<Reaction> reaction,
-      @JsonKey(name: 'reply') required final String reply,
-      @JsonKey(name: 'updatedAt') required final String updatedAt}) = _$_Tweet;
+      @JsonKey(name: 'ID') required final int id}) = _$_Tweet;
 
   factory _Tweet.fromJson(Map<String, dynamic> json) = _$_Tweet.fromJson;
 
@@ -277,21 +189,9 @@ abstract class _Tweet implements Tweet {
   @override
   @JsonKey(name: 'content')
   String get content;
-  @override
-  @JsonKey(name: 'createdAt')
-  String get createdAt;
-  @override
-  @JsonKey(name: 'id')
+  @override // @JsonKey(name: 'createdAt') required String createdAt,
+  @JsonKey(name: 'ID')
   int get id;
-  @override
-  @JsonKey(name: 'reaction')
-  List<Reaction> get reaction;
-  @override
-  @JsonKey(name: 'reply')
-  String get reply;
-  @override
-  @JsonKey(name: 'updatedAt')
-  String get updatedAt;
   @override
   @JsonKey(ignore: true)
   _$$_TweetCopyWith<_$_Tweet> get copyWith =>

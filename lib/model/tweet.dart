@@ -9,11 +9,11 @@ abstract class Tweet with _$Tweet {
   const factory Tweet({
     @JsonKey(name: 'author') required String author,
     @JsonKey(name: 'content') required String content,
-    @JsonKey(name: 'createdAt') required String createdAt,
-    @JsonKey(name: 'id') required int id,
-    @JsonKey(name: 'reaction') required List<Reaction> reaction,
-    @JsonKey(name: 'reply') required String reply,
-    @JsonKey(name: 'updatedAt') required String updatedAt,
+    // @JsonKey(name: 'createdAt') required String createdAt,
+    @JsonKey(name: 'ID') required int id,
+    // @JsonKey(name: 'reaction') required List<Reaction> reaction,
+    // @JsonKey(name: 'reply') required String reply,
+    // @JsonKey(name: 'updatedAt') required String updatedAt,
   }) = _Tweet;
 
   factory Tweet.fromJson(Map<String, dynamic> json) => _$TweetFromJson(json);
