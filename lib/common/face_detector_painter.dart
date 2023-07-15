@@ -24,7 +24,7 @@ class FaceDetectorPainter extends CustomPainter {
       final height = width * 0.5;
       final pinHeight = height * 0.3;
       final pinWidth = pinHeight;
-      final faceBubbleMargine = width * 0.3;
+      final faceBubbleMargine = width * 0.2;
       final bubbleLeftBottom = Position(
         (faceLeftTop.x + faceWidth / 2) - width / 2,
         faceLeftTop.y - pinHeight - faceBubbleMargine,
