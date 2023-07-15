@@ -54,6 +54,6 @@ class SettingScreen extends StatelessWidget {
     await storage.delete(key: "token");
     // ignore: use_build_context_synchronously
     if (!context.mounted) return;
-    Navigator.of(context).pushReplacementNamed("/login");
+    Navigator.pushNamedAndRemoveUntil(context, "/login", (r) => false);
   }
 }
