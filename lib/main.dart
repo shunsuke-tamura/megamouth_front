@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Twitter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -32,35 +33,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
+  //tweet sentence
+  var _editText = '';
+  //TL sentence
+  var _alertTextlist = <String>[];
+
+  //tweet保存
+  void _addtweet(){
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _alertTextlist.add(_editText); //編集用を保存用に
     });
   }
 
-  //tweet dialog
-  void showdialog(){
+  //TLコンテナのスクロールバー調整
+  ScrollController _scrollController = ScrollController();
 
-    
+  void initStateContainer() {
+    //double nowOffset = _scrollController.offset;
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent, 
+      duration: Duration(seconds: 1), 
+      curve: Curves.bounceIn
+    );
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
-    var _editText = '';
-    var _alertText = '';
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: Colors.white.withOpacity(0.5),
         actions: <Widget>[
           // setting button
           IconButton(
@@ -70,10 +73,35 @@ class _MyHomePageState extends State<MyHomePage> {
                 MaterialPageRoute(builder: (context) {return SettingScreen();} ),
               );
             }, 
-            iconSize: 50,
+            iconSize: 40,
             icon: Icon(Icons.settings)
           ),
         ],
+      ),
+      
+      //Time Line
+      body: Center(
+        child: Align(
+          alignment: Alignment.bottomLeft,
+          child: Container(
+            margin: EdgeInsets.all(10),
+            height: MediaQuery.of(context).size.height/4,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.transparent,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for(var i=0; i < _alertTextlist.length; i++)
+                    Text(
+                      _alertTextlist[i],
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),  
       ),
       //tweet button
       floatingActionButton: FloatingActionButton(
@@ -81,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
-              title :Text("Hello !"),
+              title :Text("コメント"),
               content: TextField(
                 onChanged: (value) {
                   setState(() {
@@ -97,13 +125,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text('キャンセル'),
                 ),
                 TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _alertText = _editText; //編集用を保存用に
-                    });
-                  Navigator.pop(context);
+                  onPressed: (){
+                    _addtweet();
+                    Navigator.pop(context);
+                    initStateContainer();
                   },
-                  child: Text('OK'),
+                  child: Text('投稿する'),
                 ),
               ],
             )
