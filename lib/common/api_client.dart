@@ -19,9 +19,12 @@ class ApiClient {
     }
 
     String? token = await storage.read(key: "token");
+    if (token == null) {
+      return http.Response('token is null', 400);
+    }
     Map<String, String> headers = {
       'content-type': 'application/json',
-      'Authorization': "Bearer${token!}"
+      'Authorization': "Bearer$token"
     };
 
     return await http.get(combineUri, headers: headers);
@@ -35,9 +38,12 @@ class ApiClient {
     }
 
     String? token = await storage.read(key: "token");
+    if (token == null) {
+      return http.Response('token is null', 400);
+    }
     Map<String, String> headers = {
       'content-type': 'application/json',
-      'Authorization': "Bearer${token!}"
+      'Authorization': "Bearer$token"
     };
 
     return await http.put(combineUri, headers: headers, body: body);
@@ -51,9 +57,12 @@ class ApiClient {
     }
 
     String? token = await storage.read(key: "token");
+    if (token == null) {
+      return http.Response('token is null', 400);
+    }
     Map<String, String> headers = {
       'content-type': 'application/json',
-      'Authorization': "Bearer${token!}"
+      'Authorization': "Bearer$token"
     };
 
     return await http.delete(combineUri, headers: headers);
