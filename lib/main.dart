@@ -4,7 +4,7 @@ import './setting.dart';
 import './login.dart';
 import './view.dart';
 import 'package:camera/camera.dart';
-import 'package:megamouth_front/widgets/camera.dart';
+import 'package:megamouth_front/widget/camera.dart';
 
 FlutterSecureStorage storage = const FlutterSecureStorage();
 void main() async {

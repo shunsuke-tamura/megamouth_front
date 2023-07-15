@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:megamouth_front/widgets/camera.dart';
+import 'package:megamouth_front/widget/camera.dart';
 import './setting.dart';
 
 class MyHomePage extends StatefulWidget {
