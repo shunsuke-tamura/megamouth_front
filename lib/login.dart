@@ -60,7 +60,7 @@ class LoginPageState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     //UserFormField(keyName: "", Icon?: Icons.account_circle);
     return FlutterLogin(
-      title: 'login_flow',
+      title: ('login_flow'),
       onLogin: _loginUser,
       onSignup: _signUpUser,
       onRecoverPassword: _recoverPassword,
