@@ -6,6 +6,7 @@ import 'package:megamouth_front/common/api_client.dart';
 import 'package:megamouth_front/logic/user_provider.dart';
 import 'package:megamouth_front/main.dart';
 import 'package:megamouth_front/model/login_res.dart';
+import 'package:megamouth_front/model/user.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -47,8 +48,23 @@ class LoginPageState extends ConsumerState<LoginScreen> {
 
   // _loginUser
   Future<String?>? _signUpUser(SignupData data) async {
+    if (data.name == null || data.name == '') {
+      return 'Please enter your id';
+    }
+    if (await idCheck(data.name!)) {
+      return 'This id is already use';
+    }
+    if (!mounted) return 'Errors occurred';
+    ref.read(userProvider.notifier).state = User(id: data.name!);
     Navigator.of(context).pushNamed('/image_upload');
     return null;
+  }
+
+  Future<bool> idCheck(String id) async {
+    final response = await ApiClient()
+        .get(Uri.parse("/user/is_used"), Uri.parse('/$id'), useToken: false);
+    final resMap = json.decode(response.body) as Map<String, dynamic>;
+    return resMap['message'];
   }
 
   // _signUpUser
