@@ -195,10 +195,14 @@ class ImageUploadState extends ConsumerState {
         ),
         floatingActionButton: ElevatedButton(
           onPressed: imagePath1 != '' && imagePath2 != '' && imagePath3 != ''
-              ? () {
-                  uploadImage(imagePath1, 1);
-                  uploadImage(imagePath2, 2);
-                  uploadImage(imagePath3, 3);
+              ? () async {
+                  final a = await uploadImage(imagePath1, 1);
+                  final b = await uploadImage(imagePath2, 2);
+                  final c = await uploadImage(imagePath3, 3);
+                  if (a != null && b != null && c != null) {
+                    if (!mounted) return;
+                    Navigator.of(context).pop([a, b, c]);
+                  }
                 }
               : null,
           style: ElevatedButton.styleFrom(
@@ -217,7 +221,7 @@ class ImageUploadState extends ConsumerState {
     );
   }
 
-  void uploadImage(String imagePath, int number) async {
+  Future<String?> uploadImage(String imagePath, int number) async {
     String fileName = "${const Uuid().v1()}.jpeg";
     Uri sasTokenServerUri = Uri.parse(
         "https://megamouth-functions.azurewebsites.net/api/CreateSasToken?code=22mVKwM8G9hbtfJrE_Iim8_zAg7uOBSmeieojXaTblnQAzFuwFQ_8A==&name=$fileName");
@@ -244,8 +248,10 @@ class ImageUploadState extends ConsumerState {
     if (upRes.statusCode != 201) {
       logger.e('StatusCode: ${upRes.statusCode}');
       logger.e('message: ${upRes.body}');
+      return null;
     } else {
       logger.i('Complete upload $number');
+      return 'https://megamouth.blob.core.windows.net/$container/$fileName';
     }
   }
 }
