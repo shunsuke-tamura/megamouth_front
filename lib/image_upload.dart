@@ -106,98 +106,108 @@ class ImageUploadState extends ConsumerState {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('写真撮影')),
-      body: Center(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      decoration: imagePath1 != ''
-                          ? BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 4,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            )
-                          : null,
-                      margin: const EdgeInsets.all(20),
-                      child:
-                          imagePath1 == '' ? takePictureButton(1) : picture(1),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      decoration: imagePath2 != ''
-                          ? BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 4,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            )
-                          : null,
-                      margin: const EdgeInsets.all(20),
-                      child:
-                          imagePath2 == '' ? takePictureButton(2) : picture(2),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      decoration: imagePath3 != ''
-                          ? BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 4,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            )
-                          : null,
-                      margin: const EdgeInsets.all(20),
-                      child:
-                          imagePath3 == '' ? takePictureButton(3) : picture(3),
-                    ),
-                  ),
-                ),
-                const Expanded(
-                  child: SizedBox(),
-                ),
-              ],
-            ),
-          ],
+    return WillPopScope(
+      //こちらを追加
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('写真撮影'),
+          automaticallyImplyLeading: false,
         ),
-      ),
-      floatingActionButton: ElevatedButton(
-        onPressed: () {
-          // ボタンが押された時の処理
-        },
-        style: ElevatedButton.styleFrom(
-          fixedSize: Size(MediaQuery.of(context).size.width * 0.7, 60),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+        body: Center(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Container(
+                        decoration: imagePath1 != ''
+                            ? BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 4,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              )
+                            : null,
+                        margin: const EdgeInsets.all(20),
+                        child: imagePath1 == ''
+                            ? takePictureButton(1)
+                            : picture(1),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Container(
+                        decoration: imagePath2 != ''
+                            ? BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 4,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              )
+                            : null,
+                        margin: const EdgeInsets.all(20),
+                        child: imagePath2 == ''
+                            ? takePictureButton(2)
+                            : picture(2),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Container(
+                        decoration: imagePath3 != ''
+                            ? BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 4,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              )
+                            : null,
+                        margin: const EdgeInsets.all(20),
+                        child: imagePath3 == ''
+                            ? takePictureButton(3)
+                            : picture(3),
+                      ),
+                    ),
+                  ),
+                  const Expanded(
+                    child: SizedBox(),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-        child: const Text(
-          "アップロード",
-          style: TextStyle(fontSize: 30),
+        floatingActionButton: ElevatedButton(
+          onPressed: () {
+            // ボタンが押された時の処理
+          },
+          style: ElevatedButton.styleFrom(
+            fixedSize: Size(MediaQuery.of(context).size.width * 0.7, 60),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          child: const Text(
+            "アップロード",
+            style: TextStyle(fontSize: 30),
+          ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
