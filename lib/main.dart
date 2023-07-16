@@ -7,6 +7,7 @@ import './login.dart';
 import './view.dart';
 import 'package:camera/camera.dart';
 import 'package:megamouth_front/widget/camera.dart';
+import 'image_upload.dart';
 
 FlutterSecureStorage storage = const FlutterSecureStorage();
 final logger = Logger();
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         "/login": (context) => const LoginScreen(),
         "/view": (context) => const MyHomePage(title: 'Twitter Demo Home Page'),
         "/setting": (context) => const SettingScreen(),
+        "/image_upload": (context) => const ImageUpload(),
       },
       //home: const MyHomePage(title: 'Twitter Demo Home Page'),
       debugShowCheckedModeBanner: false,

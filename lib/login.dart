@@ -46,8 +46,9 @@ class LoginPageState extends ConsumerState<LoginScreen> {
   }
 
   // _loginUser
-  Future<String> _signUpUser(SignupData data) async {
-    return 'To be implemented';
+  Future<String?>? _signUpUser(SignupData data) async {
+    Navigator.of(context).pushNamed('/image_upload');
+    return null;
   }
 
   // _signUpUser
@@ -69,6 +70,7 @@ class LoginPageState extends ConsumerState<LoginScreen> {
       messages: LoginMessages(userHint: "User"),
       userType: LoginUserType.text,
       userValidator: (_) => null,
+      passwordValidator: (value) => null,
     );
   }
 
