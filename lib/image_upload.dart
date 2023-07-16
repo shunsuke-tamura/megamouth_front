@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:megamouth_front/logic/shutter_notifier.dart';
 import 'package:megamouth_front/main.dart';
 import 'package:megamouth_front/widget/take_picture.dart';
 import 'package:uuid/uuid.dart';
@@ -30,6 +31,7 @@ class ImageUploadState extends ConsumerState {
   Widget takePictureButton(int number) {
     return ElevatedButton(
       onPressed: () async {
+        shutterNotifier.setType(number);
         final path = await showModalBottomSheet(
           isScrollControlled: true,
           context: context,

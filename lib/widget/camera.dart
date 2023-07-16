@@ -3,24 +3,26 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:megamouth_front/common/face_detector_painter.dart';
+import 'package:megamouth_front/logic/shutter_notifier.dart';
 
 late List<CameraDescription> cameras;
 late Rect boundingBox;
 
-class CameraWidget extends StatefulWidget {
+class CameraWidget extends ConsumerStatefulWidget {
   CameraWidget({super.key, required this.photoMode});
 
   bool photoMode;
 
   @override
-  State<CameraWidget> createState() => CameraWidgetState();
+  CameraWidgetState createState() => CameraWidgetState();
 }
 
 late CameraController controller;
 
-class CameraWidgetState extends State<CameraWidget> {
+class CameraWidgetState extends ConsumerState<CameraWidget> {
   bool isBusy = false;
   final FaceDetector _faceDetector = FaceDetector(
     options: FaceDetectorOptions(
@@ -159,6 +161,9 @@ class CameraWidgetState extends State<CameraWidget> {
       if (widget.photoMode && faces.isNotEmpty) {
         faces
             .sort((a, b) => b.boundingBox.width.compareTo(a.boundingBox.width));
+        if (faces[0].headEulerAngleY != null) {
+          shutterNotifier.setTiming(faces[0].headEulerAngleY!);
+        }
         faces = [faces[0]];
       }
       for (Face face in faces) {
