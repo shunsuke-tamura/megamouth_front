@@ -58,6 +58,7 @@ class LoginPageState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //UserFormField(keyName: "", Icon?: Icons.account_circle);
     return FlutterLogin(
       title: 'login_flow',
       onLogin: _loginUser,
@@ -67,7 +68,8 @@ class LoginPageState extends ConsumerState<LoginScreen> {
         _toHomePage();
       },
       messages: LoginMessages(userHint: "User"),
-      userType: LoginUserType.text,
+      userType: LoginUserType.name,
+      // userType: LoginUserType.text,
       userValidator: (_) => null,
     );
   }

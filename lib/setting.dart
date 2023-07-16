@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:megamouth_front/main.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import 'logic/user_provider.dart';
 
 //Setting Screen
-class SettingScreen extends StatelessWidget {
+class SettingScreen extends ConsumerWidget {
   const SettingScreen({super.key});
 
   //final String message;
   //SecondScreen({required this.message});
   @override
-  Widget build(BuildContext context) {
-    if (userProvider.name == null) {
-      Navigator.of(context).pushReplacementNamed("/login");
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(userProvider).name == null) {
+      logOut(context);
     }
+    final username = ref.watch(userProvider).id;
 
     return Scaffold(
       appBar: AppBar(
@@ -28,7 +30,7 @@ class SettingScreen extends StatelessWidget {
               SettingsTile.navigation(
                   leading: const Icon(Icons.account_circle),
                   title: const Text('User name'),
-                  value: Text(userProvider.name!)),
+                  value: Text(username)),
               SettingsTile.navigation(
                 leading: const Icon(Icons.email),
                 title: const Text('Emial'),
