@@ -1,52 +1,33 @@
-import 'package:camera/camera.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image/image.dart';
 import 'package:megamouth_front/widget/camera.dart';
 
-class TakePicture extends ConsumerStatefulWidget {
+class TakePicture extends StatelessWidget {
   const TakePicture({super.key});
-
-  @override
-  TakePictureState createState() => TakePictureState();
-}
-
-class TakePictureState extends ConsumerState {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = CameraController(cameras[1], ResolutionPreset.max);
-    _initializeControllerFuture = _controller.initialize();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: FutureBuilder<void>(
-          future: _initializeControllerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return CameraPreview(_controller);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
+        child: CameraWidget(
+          photoMode: true,
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final image = await _controller.takePicture();
-          print(image.path);
-          if (!mounted) return;
+          final image = await controller.takePicture();
+          final originalImage =
+              decodeImage((File(image.path).readAsBytesSync()));
+
+          final croppedImage = copyCrop(originalImage!,
+              x: (boundingBox.left * 0.6).floor(),
+              y: (boundingBox.top * 0.6).floor(),
+              width: (boundingBox.width * 1.6).ceil(),
+              height: (boundingBox.height * 1.6).ceil());
+          File(image.path).writeAsBytesSync(encodeJpg(croppedImage));
+          // ignore: use_build_context_synchronously
           Navigator.of(context).pop(image.path);
         },
         child: const Icon(Icons.camera_alt),

@@ -7,16 +7,20 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:megamouth_front/common/face_detector_painter.dart';
 
 late List<CameraDescription> cameras;
+late Rect boundingBox;
 
 class CameraWidget extends StatefulWidget {
-  const CameraWidget({super.key});
+  CameraWidget({super.key, required this.photoMode});
+
+  bool photoMode;
 
   @override
-  State<CameraWidget> createState() => _CameraWidgetState();
+  State<CameraWidget> createState() => CameraWidgetState();
 }
 
-class _CameraWidgetState extends State<CameraWidget> {
-  late CameraController controller;
+late CameraController controller;
+
+class CameraWidgetState extends State<CameraWidget> {
   bool isBusy = false;
   final FaceDetector _faceDetector = FaceDetector(
     options: FaceDetectorOptions(
@@ -26,11 +30,16 @@ class _CameraWidgetState extends State<CameraWidget> {
   );
   List<Widget> _tweets = [];
   late Size canvasSize;
+  late CameraDescription camera;
+  late CameraLensDirection direction;
 
   @override
   void initState() {
     super.initState();
-    controller = CameraController(cameras[0], ResolutionPreset.max);
+    camera = widget.photoMode ? cameras[1] : cameras[0];
+    direction =
+        widget.photoMode ? CameraLensDirection.front : CameraLensDirection.back;
+    controller = CameraController(camera, ResolutionPreset.max);
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -62,6 +71,7 @@ class _CameraWidgetState extends State<CameraWidget> {
     if (!controller.value.isInitialized) {
       return Container();
     }
+
     return CameraPreview(
       controller,
       child: LayoutBuilder(
@@ -152,20 +162,25 @@ class _CameraWidgetState extends State<CameraWidget> {
           canvasSize,
           inputImage.metadata!.size,
           inputImage.metadata!.rotation,
-          CameraLensDirection.front,
+          direction,
         );
+        boundingBox = face.boundingBox;
         _tweets.addAll(
           [
             CustomPaint(
-              painter: FaceDetectorPainter(conf),
+              painter: FaceDetectorPainter(conf, widget.photoMode),
             ),
-            Positioned(
-              left: conf.bubbleLeftBottom.dx + conf.width * 0.1,
-              top: conf.bubbleLeftBottom.dy - conf.height + conf.height * 0.1,
-              width: conf.width - conf.width * 0.1,
-              height: conf.height - conf.height * 0.1,
-              child: const Text('hogehoge'),
-            ),
+            !widget.photoMode
+                ? Positioned(
+                    left: conf.bubbleLeftBottom.dx + conf.width * 0.1,
+                    top: conf.bubbleLeftBottom.dy -
+                        conf.height +
+                        conf.height * 0.1,
+                    width: conf.width - conf.width * 0.1,
+                    height: conf.height - conf.height * 0.1,
+                    child: const Text('hogehoge'),
+                  )
+                : const SizedBox.shrink(),
           ],
         );
       }

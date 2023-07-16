@@ -108,10 +108,12 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          const SizedBox(
+          SizedBox(
             width: double.infinity,
             height: double.infinity,
-            child: CameraWidget(),
+            child: CameraWidget(
+              photoMode: false,
+            ),
           ),
           Center(
             child: Align(

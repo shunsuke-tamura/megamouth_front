@@ -50,7 +50,6 @@ class ImageUploadState extends ConsumerState {
             break;
         }
         setState(() {});
-        logger.d(imagePath1);
       },
       style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(

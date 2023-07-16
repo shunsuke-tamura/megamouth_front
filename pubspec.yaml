@@ -50,6 +50,7 @@ dependencies:
   flutter_riverpod: ^2.3.6
   logger: ^1.4.0
   uuid: ^3.0.7
+  image: ^4.0.17
 
 dev_dependencies:
   flutter_test:
