@@ -152,10 +152,15 @@ class CameraWidgetState extends State<CameraWidget> {
   Future<void> detector(InputImage inputImage) async {
     if (isBusy) return;
     isBusy = true;
-    final faces = await _faceDetector.processImage(inputImage);
+    var faces = await _faceDetector.processImage(inputImage);
     _tweets = [];
     if (inputImage.metadata?.size != null &&
         inputImage.metadata?.rotation != null) {
+      if (widget.photoMode && faces.isNotEmpty) {
+        faces
+            .sort((a, b) => b.boundingBox.width.compareTo(a.boundingBox.width));
+        faces = [faces[0]];
+      }
       for (Face face in faces) {
         final conf = SpeechBubbleConf.fromFace(
           face,
