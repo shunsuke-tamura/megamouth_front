@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:megamouth_front/main.dart';
 import 'package:megamouth_front/widget/take_picture.dart';
+import 'package:uuid/uuid.dart';
 
 class ImageUpload extends ConsumerStatefulWidget {
   const ImageUpload({super.key});
@@ -192,9 +194,13 @@ class ImageUploadState extends ConsumerState {
           ),
         ),
         floatingActionButton: ElevatedButton(
-          onPressed: () {
-            // ボタンが押された時の処理
-          },
+          onPressed: imagePath1 != '' && imagePath2 != '' && imagePath3 != ''
+              ? () {
+                  uploadImage(imagePath1, 1);
+                  uploadImage(imagePath2, 2);
+                  uploadImage(imagePath3, 3);
+                }
+              : null,
           style: ElevatedButton.styleFrom(
             fixedSize: Size(MediaQuery.of(context).size.width * 0.7, 60),
             shape: RoundedRectangleBorder(
@@ -209,5 +215,37 @@ class ImageUploadState extends ConsumerState {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
+  }
+
+  void uploadImage(String imagePath, int number) async {
+    String fileName = "${const Uuid().v1()}.jpeg";
+    Uri sasTokenServerUri = Uri.parse(
+        "https://megamouth-functions.azurewebsites.net/api/CreateSasToken?code=22mVKwM8G9hbtfJrE_Iim8_zAg7uOBSmeieojXaTblnQAzFuwFQ_8A==&name=$fileName");
+    final sasRes = await http.get(sasTokenServerUri);
+
+    final headers = {
+      "x-ms-blob-type": "BlockBlob",
+      "Content-Type": "image/jpeg",
+    };
+    const container = 'uzuhouse';
+    final sasToken = sasRes.body;
+
+    final completeUrl =
+        'https://megamouth.blob.core.windows.net/$container/$fileName$sasToken';
+
+    final file = File(imagePath);
+    if (!await file.exists()) {
+      throw Exception('File not found: $imagePath');
+    }
+    final data = await file.readAsBytes();
+
+    final upRes =
+        await http.put(Uri.parse(completeUrl), headers: headers, body: data);
+    if (upRes.statusCode != 201) {
+      logger.e('StatusCode: ${upRes.statusCode}');
+      logger.e('message: ${upRes.body}');
+    } else {
+      logger.i('Complete upload $number');
+    }
   }
 }
