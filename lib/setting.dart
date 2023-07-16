@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:megamouth_front/main.dart';
 import 'package:settings_ui/settings_ui.dart';
 
+import 'logic/user_provider.dart';
+
 //Setting Screen
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
@@ -10,6 +12,10 @@ class SettingScreen extends StatelessWidget {
   //SecondScreen({required this.message});
   @override
   Widget build(BuildContext context) {
+    if (userProvider.name == null) {
+      Navigator.of(context).pushReplacementNamed("/login");
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('設定'),
@@ -20,10 +26,9 @@ class SettingScreen extends StatelessWidget {
             title: const Text('アカウント情報'),
             tiles: <SettingsTile>[
               SettingsTile.navigation(
-                leading: const Icon(Icons.account_circle),
-                title: const Text('User Name'),
-                value: const Text('English'),
-              ),
+                  leading: const Icon(Icons.account_circle),
+                  title: const Text('User name'),
+                  value: Text(userProvider.name!)),
               SettingsTile.navigation(
                 leading: const Icon(Icons.email),
                 title: const Text('Emial'),
