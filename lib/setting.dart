@@ -28,20 +28,10 @@ class SettingScreen extends ConsumerWidget {
             title: const Text('アカウント情報'),
             tiles: <SettingsTile>[
               SettingsTile.navigation(
-                  leading: const Icon(Icons.account_circle),
-                  title: const Text('User name'),
-                  value: Text(username)),
-              SettingsTile.navigation(
-                leading: const Icon(Icons.email),
-                title: const Text('Emial'),
-                value: const Text(
-                    'oooooooooooooooooooooooooooooooooooooooooooooooooooooo'),
-              ),
-              SettingsTile.switchTile(
-                onToggle: (value) {},
-                initialValue: true,
-                leading: const Icon(Icons.format_paint),
-                title: const Text('Enable custom theme'),
+                leading: const Icon(Icons.account_circle),
+                trailing: const Icon(Icons.keyboard_arrow_right),
+                description: Text(username),
+                title: const Text("User name"),
               ),
               SettingsTile.navigation(
                 leading: const Icon(Icons.logout_sharp),

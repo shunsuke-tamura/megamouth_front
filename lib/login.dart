@@ -71,6 +71,7 @@ class LoginPageState extends ConsumerState<LoginScreen> {
       userType: LoginUserType.name,
       // userType: LoginUserType.text,
       userValidator: (_) => null,
+      scrollable: true,
     );
   }
 
