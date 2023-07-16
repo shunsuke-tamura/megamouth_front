@@ -41,7 +41,7 @@ class CameraWidgetState extends ConsumerState<CameraWidget> {
     camera = widget.photoMode ? cameras[1] : cameras[0];
     direction =
         widget.photoMode ? CameraLensDirection.front : CameraLensDirection.back;
-    controller = CameraController(camera, ResolutionPreset.max);
+    controller = CameraController(camera, ResolutionPreset.low);
     controller.initialize().then((_) {
       if (!mounted) {
         return;
