@@ -45,13 +45,13 @@ class CameraWidgetState extends ConsumerState<CameraWidget> {
   @override
   void initState() {
     super.initState();
-    camera = widget.photoMode ? cameras[1] : cameras[1];
+    camera = widget.photoMode ? cameras[1] : cameras[0];
     direction = widget.photoMode
         ? CameraLensDirection.front
         : CameraLensDirection.front;
     controller = CameraController(
       camera,
-      widget.photoMode ? ResolutionPreset.low : ResolutionPreset.max,
+      widget.photoMode ? ResolutionPreset.low : ResolutionPreset.low,
       imageFormatGroup: ImageFormatGroup.bgra8888,
     );
     controller.initialize().then((_) {
@@ -200,34 +200,46 @@ class CameraWidgetState extends ConsumerState<CameraWidget> {
               (json.decode(res.body) as Map<String, dynamic>)['result']);
           if (tweet.id == 0) {
             logger.i('do not have content');
-          } else {
-            final conf = SpeechBubbleConf.fromFace(
-              face,
-              canvasSize,
-              inputImage.metadata!.size,
-              inputImage.metadata!.rotation,
-              direction,
-            );
-            boundingBox = face.boundingBox;
-            _tweets.addAll(
-              [
-                CustomPaint(
-                  painter: FaceDetectorPainter(conf, widget.photoMode),
-                ),
-                !widget.photoMode
-                    ? Positioned(
-                        left: conf.bubbleLeftBottom.dx + conf.width * 0.1,
-                        top: conf.bubbleLeftBottom.dy -
-                            conf.height +
-                            conf.height * 0.1,
-                        width: conf.width - conf.width * 0.1,
-                        height: conf.height - conf.height * 0.1,
-                        child: Text(tweet.content),
-                      )
-                    : const SizedBox.shrink(),
-              ],
-            );
           }
+          final conf = SpeechBubbleConf.fromFace(
+            face,
+            canvasSize,
+            inputImage.metadata!.size,
+            inputImage.metadata!.rotation,
+            direction,
+          );
+          boundingBox = face.boundingBox;
+          _tweets.addAll(
+            [
+              CustomPaint(
+                painter: FaceDetectorPainter(conf, widget.photoMode),
+              ),
+              !widget.photoMode
+                  ? Positioned(
+                      left: conf.bubbleLeftBottom.dx + conf.width * 0.1,
+                      top: conf.bubbleLeftBottom.dy -
+                          conf.height +
+                          conf.height * 0.1,
+                      width: conf.width - conf.width * 0.1,
+                      height: conf.height - conf.height * 0.1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "@${tweet.author}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            tweet.content,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ],
+                      ))
+                  : const SizedBox.shrink(),
+            ],
+          );
         }
       }
     }
