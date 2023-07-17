@@ -24,6 +24,8 @@ mixin _$User {
   String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'name')
   String? get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'image_url')
+  List<String> get imageUrl => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -36,7 +38,9 @@ abstract class $UserCopyWith<$Res> {
       _$UserCopyWithImpl<$Res, User>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') String id, @JsonKey(name: 'name') String? name});
+      {@JsonKey(name: 'id') String id,
+      @JsonKey(name: 'name') String? name,
+      @JsonKey(name: 'image_url') List<String> imageUrl});
 }
 
 /// @nodoc
@@ -54,6 +58,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   $Res call({
     Object? id = null,
     Object? name = freezed,
+    Object? imageUrl = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -64,6 +69,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
@@ -75,7 +84,9 @@ abstract class _$$_UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') String id, @JsonKey(name: 'name') String? name});
+      {@JsonKey(name: 'id') String id,
+      @JsonKey(name: 'name') String? name,
+      @JsonKey(name: 'image_url') List<String> imageUrl});
 }
 
 /// @nodoc
@@ -89,6 +100,7 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
   $Res call({
     Object? id = null,
     Object? name = freezed,
+    Object? imageUrl = null,
   }) {
     return _then(_$_User(
       id: null == id
@@ -99,6 +111,10 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageUrl: null == imageUrl
+          ? _value._imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -108,7 +124,9 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
 class _$_User implements _User {
   const _$_User(
       {@JsonKey(name: 'id') required this.id,
-      @JsonKey(name: 'name') this.name});
+      @JsonKey(name: 'name') this.name,
+      @JsonKey(name: 'image_url') required final List<String> imageUrl})
+      : _imageUrl = imageUrl;
 
   factory _$_User.fromJson(Map<String, dynamic> json) => _$$_UserFromJson(json);
 
@@ -118,10 +136,18 @@ class _$_User implements _User {
   @override
   @JsonKey(name: 'name')
   final String? name;
+  final List<String> _imageUrl;
+  @override
+  @JsonKey(name: 'image_url')
+  List<String> get imageUrl {
+    if (_imageUrl is EqualUnmodifiableListView) return _imageUrl;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_imageUrl);
+  }
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name)';
+    return 'User(id: $id, name: $name, imageUrl: $imageUrl)';
   }
 
   @override
@@ -130,12 +156,14 @@ class _$_User implements _User {
         (other.runtimeType == runtimeType &&
             other is _$_User &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            const DeepCollectionEquality().equals(other._imageUrl, _imageUrl));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, const DeepCollectionEquality().hash(_imageUrl));
 
   @JsonKey(ignore: true)
   @override
@@ -153,8 +181,10 @@ class _$_User implements _User {
 
 abstract class _User implements User {
   const factory _User(
-      {@JsonKey(name: 'id') required final String id,
-      @JsonKey(name: 'name') final String? name}) = _$_User;
+          {@JsonKey(name: 'id') required final String id,
+          @JsonKey(name: 'name') final String? name,
+          @JsonKey(name: 'image_url') required final List<String> imageUrl}) =
+      _$_User;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$_User.fromJson;
 
@@ -164,6 +194,9 @@ abstract class _User implements User {
   @override
   @JsonKey(name: 'name')
   String? get name;
+  @override
+  @JsonKey(name: 'image_url')
+  List<String> get imageUrl;
   @override
   @JsonKey(ignore: true)
   _$$_UserCopyWith<_$_User> get copyWith => throw _privateConstructorUsedError;

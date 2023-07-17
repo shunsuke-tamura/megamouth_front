@@ -23,7 +23,9 @@ mixin _$LoginRes {
   @JsonKey(name: 'jwt')
   String get jwt => throw _privateConstructorUsedError;
   @JsonKey(name: 'user')
-  User get user => throw _privateConstructorUsedError;
+  Map<String, String> get user => throw _privateConstructorUsedError;
+  @JsonKey(name: 'image_url')
+  List<String> get imageUrl => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -37,9 +39,9 @@ abstract class $LoginResCopyWith<$Res> {
       _$LoginResCopyWithImpl<$Res, LoginRes>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'jwt') String jwt, @JsonKey(name: 'user') User user});
-
-  $UserCopyWith<$Res> get user;
+      {@JsonKey(name: 'jwt') String jwt,
+      @JsonKey(name: 'user') Map<String, String> user,
+      @JsonKey(name: 'image_url') List<String> imageUrl});
 }
 
 /// @nodoc
@@ -57,6 +59,7 @@ class _$LoginResCopyWithImpl<$Res, $Val extends LoginRes>
   $Res call({
     Object? jwt = null,
     Object? user = null,
+    Object? imageUrl = null,
   }) {
     return _then(_value.copyWith(
       jwt: null == jwt
@@ -66,16 +69,12 @@ class _$LoginResCopyWithImpl<$Res, $Val extends LoginRes>
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
-              as User,
+              as Map<String, String>,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $UserCopyWith<$Res> get user {
-    return $UserCopyWith<$Res>(_value.user, (value) {
-      return _then(_value.copyWith(user: value) as $Val);
-    });
   }
 }
 
@@ -87,10 +86,9 @@ abstract class _$$_LoginResCopyWith<$Res> implements $LoginResCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'jwt') String jwt, @JsonKey(name: 'user') User user});
-
-  @override
-  $UserCopyWith<$Res> get user;
+      {@JsonKey(name: 'jwt') String jwt,
+      @JsonKey(name: 'user') Map<String, String> user,
+      @JsonKey(name: 'image_url') List<String> imageUrl});
 }
 
 /// @nodoc
@@ -106,6 +104,7 @@ class __$$_LoginResCopyWithImpl<$Res>
   $Res call({
     Object? jwt = null,
     Object? user = null,
+    Object? imageUrl = null,
   }) {
     return _then(_$_LoginRes(
       jwt: null == jwt
@@ -113,9 +112,13 @@ class __$$_LoginResCopyWithImpl<$Res>
           : jwt // ignore: cast_nullable_to_non_nullable
               as String,
       user: null == user
-          ? _value.user
+          ? _value._user
           : user // ignore: cast_nullable_to_non_nullable
-              as User,
+              as Map<String, String>,
+      imageUrl: null == imageUrl
+          ? _value._imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -125,7 +128,10 @@ class __$$_LoginResCopyWithImpl<$Res>
 class _$_LoginRes implements _LoginRes {
   const _$_LoginRes(
       {@JsonKey(name: 'jwt') required this.jwt,
-      @JsonKey(name: 'user') required this.user});
+      @JsonKey(name: 'user') required final Map<String, String> user,
+      @JsonKey(name: 'image_url') required final List<String> imageUrl})
+      : _user = user,
+        _imageUrl = imageUrl;
 
   factory _$_LoginRes.fromJson(Map<String, dynamic> json) =>
       _$$_LoginResFromJson(json);
@@ -133,13 +139,27 @@ class _$_LoginRes implements _LoginRes {
   @override
   @JsonKey(name: 'jwt')
   final String jwt;
+  final Map<String, String> _user;
   @override
   @JsonKey(name: 'user')
-  final User user;
+  Map<String, String> get user {
+    if (_user is EqualUnmodifiableMapView) return _user;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_user);
+  }
+
+  final List<String> _imageUrl;
+  @override
+  @JsonKey(name: 'image_url')
+  List<String> get imageUrl {
+    if (_imageUrl is EqualUnmodifiableListView) return _imageUrl;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_imageUrl);
+  }
 
   @override
   String toString() {
-    return 'LoginRes(jwt: $jwt, user: $user)';
+    return 'LoginRes(jwt: $jwt, user: $user, imageUrl: $imageUrl)';
   }
 
   @override
@@ -148,12 +168,17 @@ class _$_LoginRes implements _LoginRes {
         (other.runtimeType == runtimeType &&
             other is _$_LoginRes &&
             (identical(other.jwt, jwt) || other.jwt == jwt) &&
-            (identical(other.user, user) || other.user == user));
+            const DeepCollectionEquality().equals(other._user, _user) &&
+            const DeepCollectionEquality().equals(other._imageUrl, _imageUrl));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, jwt, user);
+  int get hashCode => Object.hash(
+      runtimeType,
+      jwt,
+      const DeepCollectionEquality().hash(_user),
+      const DeepCollectionEquality().hash(_imageUrl));
 
   @JsonKey(ignore: true)
   @override
@@ -171,8 +196,10 @@ class _$_LoginRes implements _LoginRes {
 
 abstract class _LoginRes implements LoginRes {
   const factory _LoginRes(
-      {@JsonKey(name: 'jwt') required final String jwt,
-      @JsonKey(name: 'user') required final User user}) = _$_LoginRes;
+          {@JsonKey(name: 'jwt') required final String jwt,
+          @JsonKey(name: 'user') required final Map<String, String> user,
+          @JsonKey(name: 'image_url') required final List<String> imageUrl}) =
+      _$_LoginRes;
 
   factory _LoginRes.fromJson(Map<String, dynamic> json) = _$_LoginRes.fromJson;
 
@@ -181,7 +208,10 @@ abstract class _LoginRes implements LoginRes {
   String get jwt;
   @override
   @JsonKey(name: 'user')
-  User get user;
+  Map<String, String> get user;
+  @override
+  @JsonKey(name: 'image_url')
+  List<String> get imageUrl;
   @override
   @JsonKey(ignore: true)
   _$$_LoginResCopyWith<_$_LoginRes> get copyWith =>

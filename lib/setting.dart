@@ -15,16 +15,17 @@ class SettingScreen extends ConsumerWidget {
   //SecondScreen({required this.message});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.watch(userProvider).name == null) {
+    if (ref.watch(userProvider).id == '') {
       logOut(context);
     }
     final username = ref.watch(userProvider).id;
+    final imageUrl = ref.watch(userProvider).imageUrl[1];
 
-    Future<Image?> downloadImage = downloadimage(username);
-    Image? userImage;
-    downloadImage.then((result) {
-      userImage = result;
-    });
+    // Future<Image?> downloadImage = downloadimage(username);
+    // Image? userImage;
+    // downloadImage.then((result) {
+    //   userImage = result;
+    // });
 
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +39,11 @@ class SettingScreen extends ConsumerWidget {
                 height: 150,
                 margin: const EdgeInsets.only(
                     top: 40, left: 40, right: 40, bottom: 40),
-                child: _displaySelectionImageOrGrayImage(userImage)),
+                // child: _displaySelectionImageOrGrayImage(userImage)),
+                // child: _displaySelectionImageOrGrayImage(Image.network(
+                //     "https://th.bing.com/th?id=ODL.45f4ccee64ec1e87729cbfc7df25d27f&w=197&h=103&c=7&rs=1&qlt=80&o=6&pid=RichNav"))),
+                child:
+                    _displaySelectionImageOrGrayImage(Image.network(imageUrl))),
           ),
           SettingsSection(
             title: const Text('アカウント情報'),
@@ -104,21 +109,21 @@ class SettingScreen extends ConsumerWidget {
     }
   }
 
-  Future<String?> urlimage(String id) async {
-    final res = await ApiClient().get(Uri.parse("/user/$id/"), null);
-    final parsed = json.decode(res.body).cast<Map<String, String?>>();
-    return parsed("image_url");
-  }
+  // Future<String?> urlimage(String id) async {
+  //   final res = await ApiClient().get(Uri.parse("/user/$id/"), null);
+  //   final parsed = json.decode(res.body).cast<Map<String, String?>>();
+  //   return parsed("image_url");
+  // }
 
-  Future<Image?> downloadimage(String usernamae) async {
-    String? res = await urlimage(usernamae);
-    Image? userImage;
-    if (res != null) {
-      return Image.network(res);
-    } else {
-      //return userImage;
-      return Image.network(
-          "https://th.bing.com/th?id=ODL.45f4ccee64ec1e87729cbfc7df25d27f&w=197&h=103&c=7&rs=1&qlt=80&o=6&pid=RichNav");
-    }
-  }
+  // Future<Image?> downloadimage(String usernamae) async {
+  //   String? res = await urlimage(usernamae);
+  //   Image? userImage;
+  //   if (res != null) {
+  //     return Image.network(res);
+  //   } else {
+  //     //return userImage;
+  //     return Image.network(
+  //         "https://th.bing.com/th?id=ODL.45f4ccee64ec1e87729cbfc7df25d27f&w=197&h=103&c=7&rs=1&qlt=80&o=6&pid=RichNav");
+  //   }
+  // }
 }

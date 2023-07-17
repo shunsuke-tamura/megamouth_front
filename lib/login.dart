@@ -42,7 +42,8 @@ class LoginPageState extends ConsumerState<LoginScreen> {
       final res =
           LoginRes.fromJson(json.decode(response.body) as Map<String, dynamic>);
       await storage.write(key: "token", value: res.jwt);
-      ref.read(userProvider.notifier).state = res.user;
+      ref.read(userProvider.notifier).state =
+          User(id: res.user['id']!, imageUrl: res.imageUrl);
       return null;
     }
   }
@@ -59,7 +60,7 @@ class LoginPageState extends ConsumerState<LoginScreen> {
       return 'This id is already use';
     }
     if (!mounted) return 'Errors occurred';
-    ref.read(userProvider.notifier).state = User(id: data.name!);
+    ref.read(userProvider.notifier).state = User(id: data.name!, imageUrl: []);
     List<String>? images = (await Navigator.of(context)
         .pushNamed('/image_upload')) as List<String>;
     final body = CreateUserReq(
@@ -74,6 +75,8 @@ class LoginPageState extends ConsumerState<LoginScreen> {
       return 'Failed to signUp';
     } else {
       logger.i('success create user');
+      ref.read(userProvider.notifier).state =
+          User(id: data.name!, imageUrl: images);
       final token = (json.decode(res.body) as Map<String, dynamic>)["jwt"];
       if (token == null) {
         logger.e('Cannot get jwt');

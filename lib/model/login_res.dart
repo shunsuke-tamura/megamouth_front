@@ -8,7 +8,8 @@ part 'login_res.g.dart';
 abstract class LoginRes with _$LoginRes {
   const factory LoginRes({
     @JsonKey(name: 'jwt') required String jwt,
-    @JsonKey(name: 'user') required User user,
+    @JsonKey(name: 'user') required Map<String, String> user,
+    @JsonKey(name: 'image_url') required List<String> imageUrl,
   }) = _LoginRes;
 
   factory LoginRes.fromJson(Map<String, dynamic> json) =>

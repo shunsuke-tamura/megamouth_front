@@ -179,28 +179,7 @@ class CameraWidgetState extends ConsumerState<CameraWidget> {
         faces = [faces[0]];
       }
       for (Face face in faces) {
-        final image = convertImage(cameraImage);
-        final croppedImage = copyCrop(
-            image,
-            (face.boundingBox.left * 0.3).floor(),
-            (face.boundingBox.top * 0.3).floor(),
-            (face.boundingBox.width * 2).ceil(),
-            (face.boundingBox.height * 2).ceil());
-        final base64 = base64Encode(encodeJpg(croppedImage));
-        final body = {"image_base64": base64};
-        final res = await ApiClient()
-            .post(Uri.parse('grpc/stream'), json.encode(body), isNgrok: true);
-        if (res.statusCode != 200) {
-          logger.e('cannot identification');
-          logger.e('StatusCode: ${res.statusCode}');
-          logger.e('message: ${res.body}');
-          logger.e('body: ${json.encode(body)}');
-        } else {
-          final tweet = Tweet.fromJson(
-              (json.decode(res.body) as Map<String, dynamic>)['result']);
-          if (tweet.id == 0) {
-            logger.i('do not have content');
-          }
+        if (widget.photoMode) {
           final conf = SpeechBubbleConf.fromFace(
             face,
             canvasSize,
@@ -214,32 +193,69 @@ class CameraWidgetState extends ConsumerState<CameraWidget> {
               CustomPaint(
                 painter: FaceDetectorPainter(conf, widget.photoMode),
               ),
-              !widget.photoMode
-                  ? Positioned(
-                      left: conf.bubbleLeftBottom.dx + conf.width * 0.1,
-                      top: conf.bubbleLeftBottom.dy -
-                          conf.height +
-                          conf.height * 0.1,
-                      width: conf.width - conf.width * 0.1,
-                      height: conf.height - conf.height * 0.1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "@${tweet.author}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Text(
-                            tweet.content,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                        ],
-                      ))
-                  : const SizedBox.shrink(),
             ],
           );
+        } else {
+          final image = convertImage(cameraImage);
+          final croppedImage = copyCrop(
+              image,
+              (face.boundingBox.left * 0.3).floor(),
+              (face.boundingBox.top * 0.3).floor(),
+              (face.boundingBox.width * 2).ceil(),
+              (face.boundingBox.height * 2).ceil());
+          final base64 = base64Encode(encodeJpg(croppedImage));
+          final body = {"image_base64": base64};
+          final res = await ApiClient()
+              .post(Uri.parse('grpc/stream'), json.encode(body), isNgrok: true);
+          if (res.statusCode != 200) {
+            logger.e('cannot identification');
+            logger.e('StatusCode: ${res.statusCode}');
+            logger.e('message: ${res.body}');
+            logger.e('body: ${json.encode(body)}');
+          } else {
+            final tweet = Tweet.fromJson(
+                (json.decode(res.body) as Map<String, dynamic>)['result']);
+            if (tweet.id == 0) {
+              logger.i('do not have content');
+            }
+            final conf = SpeechBubbleConf.fromFace(
+              face,
+              canvasSize,
+              inputImage.metadata!.size,
+              inputImage.metadata!.rotation,
+              direction,
+            );
+            boundingBox = face.boundingBox;
+            _tweets.addAll(
+              [
+                CustomPaint(
+                  painter: FaceDetectorPainter(conf, widget.photoMode),
+                ),
+                Positioned(
+                    left: conf.bubbleLeftBottom.dx + conf.width * 0.1,
+                    top: conf.bubbleLeftBottom.dy -
+                        conf.height +
+                        conf.height * 0.1,
+                    width: conf.width - conf.width * 0.1,
+                    height: conf.height - conf.height * 0.1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "@${tweet.author}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        Text(
+                          tweet.content,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                      ],
+                    ))
+              ],
+            );
+          }
         }
       }
     }
