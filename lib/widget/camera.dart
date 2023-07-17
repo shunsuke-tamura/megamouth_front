@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
@@ -5,8 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:image/image.dart';
+import 'package:megamouth_front/common/api_client.dart';
 import 'package:megamouth_front/common/face_detector_painter.dart';
 import 'package:megamouth_front/logic/shutter_notifier.dart';
+import 'package:megamouth_front/main.dart';
+import 'package:megamouth_front/model/tweet.dart';
+
+import '../common/image_utils.dart';
 
 late List<CameraDescription> cameras;
 late Rect boundingBox;
@@ -38,10 +45,15 @@ class CameraWidgetState extends ConsumerState<CameraWidget> {
   @override
   void initState() {
     super.initState();
-    camera = widget.photoMode ? cameras[1] : cameras[0];
-    direction =
-        widget.photoMode ? CameraLensDirection.front : CameraLensDirection.back;
-    controller = CameraController(camera, ResolutionPreset.low);
+    camera = widget.photoMode ? cameras[1] : cameras[1];
+    direction = widget.photoMode
+        ? CameraLensDirection.front
+        : CameraLensDirection.front;
+    controller = CameraController(
+      camera,
+      widget.photoMode ? ResolutionPreset.low : ResolutionPreset.max,
+      imageFormatGroup: ImageFormatGroup.bgra8888,
+    );
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -90,7 +102,7 @@ class CameraWidgetState extends ConsumerState<CameraWidget> {
   void _processCameraImage(CameraImage image) {
     final inputImage = _inputImageFromCameraImage(image);
     if (inputImage == null) return;
-    detector(inputImage);
+    detector(inputImage, image);
   }
 
   final _orientations = {
@@ -151,7 +163,7 @@ class CameraWidgetState extends ConsumerState<CameraWidget> {
     );
   }
 
-  Future<void> detector(InputImage inputImage) async {
+  Future<void> detector(InputImage inputImage, CameraImage cameraImage) async {
     if (isBusy) return;
     isBusy = true;
     var faces = await _faceDetector.processImage(inputImage);
@@ -167,32 +179,56 @@ class CameraWidgetState extends ConsumerState<CameraWidget> {
         faces = [faces[0]];
       }
       for (Face face in faces) {
-        final conf = SpeechBubbleConf.fromFace(
-          face,
-          canvasSize,
-          inputImage.metadata!.size,
-          inputImage.metadata!.rotation,
-          direction,
-        );
-        boundingBox = face.boundingBox;
-        _tweets.addAll(
-          [
-            CustomPaint(
-              painter: FaceDetectorPainter(conf, widget.photoMode),
-            ),
-            !widget.photoMode
-                ? Positioned(
-                    left: conf.bubbleLeftBottom.dx + conf.width * 0.1,
-                    top: conf.bubbleLeftBottom.dy -
-                        conf.height +
-                        conf.height * 0.1,
-                    width: conf.width - conf.width * 0.1,
-                    height: conf.height - conf.height * 0.1,
-                    child: const Text('hogehoge'),
-                  )
-                : const SizedBox.shrink(),
-          ],
-        );
+        final image = convertImage(cameraImage);
+        final croppedImage = copyCrop(
+            image,
+            (face.boundingBox.left * 0.3).floor(),
+            (face.boundingBox.top * 0.3).floor(),
+            (face.boundingBox.width * 2).ceil(),
+            (face.boundingBox.height * 2).ceil());
+        final base64 = base64Encode(encodeJpg(croppedImage));
+        final body = {"image_base64": base64};
+        final res = await ApiClient()
+            .post(Uri.parse('grpc/stream'), json.encode(body), isNgrok: true);
+        if (res.statusCode != 200) {
+          logger.e('cannot identification');
+          logger.e('StatusCode: ${res.statusCode}');
+          logger.e('message: ${res.body}');
+          logger.e('body: ${json.encode(body)}');
+        } else {
+          final tweet = Tweet.fromJson(
+              (json.decode(res.body) as Map<String, dynamic>)['result']);
+          if (tweet.id == 0) {
+            logger.i('do not have content');
+          } else {
+            final conf = SpeechBubbleConf.fromFace(
+              face,
+              canvasSize,
+              inputImage.metadata!.size,
+              inputImage.metadata!.rotation,
+              direction,
+            );
+            boundingBox = face.boundingBox;
+            _tweets.addAll(
+              [
+                CustomPaint(
+                  painter: FaceDetectorPainter(conf, widget.photoMode),
+                ),
+                !widget.photoMode
+                    ? Positioned(
+                        left: conf.bubbleLeftBottom.dx + conf.width * 0.1,
+                        top: conf.bubbleLeftBottom.dy -
+                            conf.height +
+                            conf.height * 0.1,
+                        width: conf.width - conf.width * 0.1,
+                        height: conf.height - conf.height * 0.1,
+                        child: Text(tweet.content),
+                      )
+                    : const SizedBox.shrink(),
+              ],
+            );
+          }
+        }
       }
     }
     isBusy = false;

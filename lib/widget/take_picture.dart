@@ -14,11 +14,12 @@ class TakePicture extends StatelessWidget {
       final image = await controller.takePicture();
       final originalImage = decodeImage((File(image.path).readAsBytesSync()));
 
-      final croppedImage = copyCrop(originalImage!,
-          x: (boundingBox.left * 0.3).floor(),
-          y: (boundingBox.top * 0.3).floor(),
-          width: (boundingBox.width * 2).ceil(),
-          height: (boundingBox.height * 2).ceil());
+      final croppedImage = copyCrop(
+          originalImage!,
+          (boundingBox.left * 0.3).floor(),
+          (boundingBox.top * 0.3).floor(),
+          (boundingBox.width * 2).ceil(),
+          (boundingBox.height * 2).ceil());
       File(image.path).writeAsBytesSync(encodeJpg(croppedImage));
       // ignore: use_build_context_synchronously
       Navigator.of(context).pop(image.path);

@@ -4,8 +4,17 @@ import 'package:megamouth_front/main.dart';
 class ApiClient {
   Uri baseUri = Uri.parse("https://megamouth-api.azurewebsites.net/api/v1");
 
-  Future<http.Response> post(Uri endpoint, String body) async {
-    Uri combineUri = baseUri.replace(path: "${baseUri.path}/${endpoint.path}");
+  Future<http.Response> post(Uri endpoint, String body,
+      {bool isNgrok = false}) async {
+    Uri combineUri;
+    if (isNgrok) {
+      final ngrokBaseUri =
+          Uri.parse('https://7c1a-180-10-84-182.ngrok-free.app/api/v1');
+      combineUri =
+          ngrokBaseUri.replace(path: "${ngrokBaseUri.path}/${endpoint.path}");
+    } else {
+      combineUri = baseUri.replace(path: "${baseUri.path}/${endpoint.path}");
+    }
     Map<String, String> headers = {'content-type': 'application/json'};
 
     return await http.post(combineUri, headers: headers, body: body);
