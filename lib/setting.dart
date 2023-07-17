@@ -1,7 +1,7 @@
-import 'dart:io';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:megamouth_front/common/api_client.dart';
 import 'package:megamouth_front/main.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -11,8 +11,6 @@ import 'logic/user_provider.dart';
 class SettingScreen extends ConsumerWidget {
   const SettingScreen({super.key});
 
-  static final Image _image = Image.network(
-      "https://th.bing.com/th?id=ODL.45f4ccee64ec1e87729cbfc7df25d27f&w=197&h=103&c=7&rs=1&qlt=80&o=6&pid=RichNav");
   //final String message;
   //SecondScreen({required this.message});
   @override
@@ -21,6 +19,12 @@ class SettingScreen extends ConsumerWidget {
       logOut(context);
     }
     final username = ref.watch(userProvider).id;
+
+    Future<Image?> downloadImage = downloadimage(username);
+    Image? userImage;
+    downloadImage.then((result) {
+      userImage = result;
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +38,7 @@ class SettingScreen extends ConsumerWidget {
                 height: 150,
                 margin: const EdgeInsets.only(
                     top: 40, left: 40, right: 40, bottom: 40),
-                child: _displaySelectionImageOrGrayImage()),
+                child: _displaySelectionImageOrGrayImage(userImage)),
           ),
           SettingsSection(
             title: const Text('アカウント情報'),
@@ -66,35 +70,55 @@ class SettingScreen extends ConsumerWidget {
     Navigator.pushNamedAndRemoveUntil(context, "/login", (r) => false);
   }
 
-  Widget _displaySelectionImageOrGrayImage() {
-    if (_image == null) {
+  Widget _displaySelectionImageOrGrayImage(Image? uimage) {
+    if (uimage == null) {
       return Container(
         decoration: BoxDecoration(
-          color: const Color(0xffdfdfdf),
+          shape: BoxShape.circle,
+          color: const Color.fromARGB(233, 251, 240, 240),
           border: Border.all(
             width: 2,
             color: const Color(0xff000000),
           ),
-          borderRadius: BorderRadius.circular(10),
+          //borderRadius: BorderRadius.circular(10),
         ),
       );
     } else {
       return Container(
         decoration: BoxDecoration(
+          shape: BoxShape.circle,
           border: Border.all(
             width: 2,
             color: const Color(0xff000000),
           ),
-          borderRadius: BorderRadius.circular(10),
+          //borderRadius: BorderRadius.circular(10),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image(
-            image: _image.image,
+            image: uimage.image,
             fit: BoxFit.fill,
           ),
         ),
       );
+    }
+  }
+
+  Future<String?> urlimage(String id) async {
+    final res = await ApiClient().get(Uri.parse("/user/$id/"), null);
+    final parsed = json.decode(res.body).cast<Map<String, String?>>();
+    return parsed("image_url");
+  }
+
+  Future<Image?> downloadimage(String usernamae) async {
+    String? res = await urlimage(usernamae);
+    Image? userImage;
+    if (res != null) {
+      return Image.network(res);
+    } else {
+      //return userImage;
+      return Image.network(
+          "https://th.bing.com/th?id=ODL.45f4ccee64ec1e87729cbfc7df25d27f&w=197&h=103&c=7&rs=1&qlt=80&o=6&pid=RichNav");
     }
   }
 }
