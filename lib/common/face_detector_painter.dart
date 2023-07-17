@@ -7,6 +7,7 @@ import 'coordinates_translator.dart';
 class FaceDetectorPainter extends CustomPainter {
   FaceDetectorPainter(
     this.conf,
+    this.photoMode,
   ) {
     width = conf.width;
     height = conf.height;
@@ -18,6 +19,7 @@ class FaceDetectorPainter extends CustomPainter {
   }
 
   final SpeechBubbleConf conf;
+  final bool photoMode;
 
   late double width;
   late double height;
@@ -71,12 +73,21 @@ class FaceDetectorPainter extends CustomPainter {
       canvas.drawPath(path, paint);
     }
 
+    void boundingBox() {
+      canvas.drawRect(
+          Rect.fromLTRB(conf.left, conf.top, conf.right, conf.bottom),
+          Paint()
+            ..color = Colors.redAccent.shade400
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 8);
+    }
+
     // print('-------canvas--------');
     // print(size.width);
     // print(size.height);
     // print('---------------------');
 
-    speechBubble();
+    photoMode ? boundingBox() : speechBubble();
   }
 
   @override
@@ -93,6 +104,10 @@ class SpeechBubbleConf {
   double faceBubbleMargine;
   Offset bubbleLeftBottom;
   double bubbleEdgeDiameter;
+  double left;
+  double right;
+  double top;
+  double bottom;
 
   SpeechBubbleConf(
     this.bubbleEdgeDiameter,
@@ -102,6 +117,10 @@ class SpeechBubbleConf {
     this.pinHeight,
     this.pinWidth,
     this.width,
+    this.left,
+    this.right,
+    this.top,
+    this.bottom,
   );
 
   static SpeechBubbleConf fromFace(Face face, Size canvasSize, Size imageSize,
@@ -127,6 +146,13 @@ class SpeechBubbleConf {
       rotation,
       cameraLensDirection,
     );
+    final bottom = translateY(
+      face.boundingBox.bottom,
+      canvasSize,
+      imageSize,
+      rotation,
+      cameraLensDirection,
+    );
 
     final faceWidth = right - left;
     final faceLeftTop = Offset(left, top);
@@ -142,7 +168,18 @@ class SpeechBubbleConf {
     );
     final bubbleEdgeDiameter = width * 0.1;
 
-    return SpeechBubbleConf(bubbleEdgeDiameter, bubbleLeftBottom,
-        faceBubbleMargine, height, pinHeight, pinWidth, width);
+    return SpeechBubbleConf(
+      bubbleEdgeDiameter,
+      bubbleLeftBottom,
+      faceBubbleMargine,
+      height,
+      pinHeight,
+      pinWidth,
+      width,
+      left,
+      right,
+      top,
+      bottom,
+    );
   }
 }

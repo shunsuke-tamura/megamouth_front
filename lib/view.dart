@@ -28,6 +28,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     isPolling = true;
     startPolling();
     setState(() {});
@@ -35,6 +36,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     isPolling = false;
     super.dispose();
   }
@@ -83,6 +85,13 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeInOut,
+      );
+    });
     return Scaffold(
       extendBodyBehindAppBar: true,
       //ヘッダー
@@ -108,34 +117,63 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          const SizedBox(
+          SizedBox(
             width: double.infinity,
             height: double.infinity,
-            child: CameraWidget(),
+            child: CameraWidget(
+              photoMode: false,
+            ),
           ),
-          Center(
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Container(
-                margin: const EdgeInsets.all(10),
-                height: MediaQuery.of(context).size.height / 4,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.transparent,
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (var i = 0; i < _alertTextlist.length; i++)
-                        Text(
-                          _alertTextlist[i].content,
+          Align(
+            alignment: const Alignment(-0.8, 0.9),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height / 4,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(
+                    _alertTextlist.length,
+                    (index) => Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(5, 0, 5, 5),
+                          width: double.infinity,
+                          constraints: const BoxConstraints(minHeight: 40),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(97, 221, 225, 247),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('@${_alertTextlist[index].author}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                              Text(
+                                _alertTextlist[index].content,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
                         ),
-                    ],
+                        const SizedBox(
+                          height: 16,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
       //tweet button

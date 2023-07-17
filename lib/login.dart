@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:megamouth_front/common/api_client.dart';
 import 'package:megamouth_front/logic/user_provider.dart';
 import 'package:megamouth_front/main.dart';
+import 'package:megamouth_front/model/create_user_req.dart';
 import 'package:megamouth_front/model/login_res.dart';
+import 'package:megamouth_front/model/user.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -46,8 +48,49 @@ class LoginPageState extends ConsumerState<LoginScreen> {
   }
 
   // _loginUser
-  Future<String> _signUpUser(SignupData data) async {
-    return 'To be implemented';
+  Future<String?>? _signUpUser(SignupData data) async {
+    if (data.name == null ||
+        data.name == '' ||
+        data.password == null ||
+        data.password == '') {
+      return 'Please enter your id and password';
+    }
+    if (await idCheck(data.name!)) {
+      return 'This id is already use';
+    }
+    if (!mounted) return 'Errors occurred';
+    ref.read(userProvider.notifier).state = User(id: data.name!);
+    List<String>? images = (await Navigator.of(context)
+        .pushNamed('/image_upload')) as List<String>;
+    final body = CreateUserReq(
+        id: data.name!, name: null, password: data.password!, imageUrl: images);
+    final res = await ApiClient()
+        .post(Uri.parse('/user/create'), json.encode(body.toJson()));
+    if (res.statusCode != 200) {
+      logger.e('Failed to signUp');
+      logger.e('StatusCode: ${res.statusCode}');
+      logger.e('message: ${res.body}');
+      logger.e('body: ${json.encode(body.toJson())}');
+      return 'Failed to signUp';
+    } else {
+      logger.i('success create user');
+      final token = (json.decode(res.body) as Map<String, dynamic>)["jwt"];
+      if (token == null) {
+        logger.e('Cannot get jwt');
+        return 'Failed to signUp';
+      }
+      await storage.write(
+          key: "token",
+          value: (json.decode(res.body) as Map<String, dynamic>)["jwt"]);
+      return null;
+    }
+  }
+
+  Future<bool> idCheck(String id) async {
+    final response = await ApiClient()
+        .get(Uri.parse("/user/is_used"), Uri.parse('/$id'), useToken: false);
+    final resMap = json.decode(response.body) as Map<String, dynamic>;
+    return resMap['message'];
   }
 
   // _signUpUser
@@ -71,6 +114,7 @@ class LoginPageState extends ConsumerState<LoginScreen> {
       userType: LoginUserType.name,
       // userType: LoginUserType.text,
       userValidator: (_) => null,
+      passwordValidator: (value) => null,
       scrollable: true,
     );
   }
